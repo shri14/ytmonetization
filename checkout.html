@@ -1598,8 +1598,8 @@
       }, 2500);
     }
 
-    /* iOS: hide app buttons (deep links don't work on iOS Chrome) */
-    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    /* Mobile: hide Pay Now button (UPI deep links don't work from browsers on any phone) */
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       const notice = document.getElementById('iosUpiNotice');
       if (notice) notice.style.display = 'block';
       document.querySelectorAll('.app-grid, .apps-label, #payAppSection').forEach(el => el.style.display = 'none');
