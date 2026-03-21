@@ -393,6 +393,77 @@ body {
   50% { transform: translateY(10px); opacity: 0.3; }
 }
 
+/* ── HERO SEARCH ── */
+.hero-search-wrap {
+  position: relative;
+  width: 100%; max-width: 580px;
+  animation: fadeInUp 0.8s ease 0.35s both;
+}
+.hero-search-box {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 0 1.1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.hero-search-box:focus-within {
+  border-color: rgba(255,65,108,0.5);
+  box-shadow: 0 0 0 4px rgba(255,65,108,0.1), 0 8px 40px rgba(0,0,0,0.3);
+}
+.hero-search-input {
+  flex: 1; background: none; border: none; outline: none;
+  color: #F1F5F9;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 0;
+}
+.hero-search-input::placeholder { color: #475569; }
+.hero-search-clear {
+  background: none; border: none; cursor: pointer;
+  color: #475569; padding: 4px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  transition: color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+.hero-search-clear:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.hero-search-clear.visible { display: flex; }
+.hero-search-dropdown {
+  position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+  background: #0D1117;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+  display: none; z-index: 200;
+  max-height: 380px; overflow-y: auto;
+}
+.hero-search-dropdown.open { display: block; }
+.hero-search-dropdown::-webkit-scrollbar { width: 4px; }
+.hero-search-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.hsd-label {
+  padding: 0.65rem 1rem 0.3rem;
+  font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; color: #475569;
+}
+.hsd-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0.75rem 1rem; text-decoration: none;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.hsd-item:last-child { border-bottom: none; }
+.hsd-item:hover { background: rgba(255,255,255,0.05); }
+.hsd-ico { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.hsd-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.hsd-name { font-size: 0.88rem; font-weight: 600; color: #F1F5F9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hsd-meta { font-size: 0.73rem; color: #64748B; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hsd-price { font-size: 0.9rem; font-weight: 700; color: #FF416C; flex-shrink: 0; }
+.hsd-badge { font-size: 0.65rem; font-weight: 700; background: linear-gradient(135deg,#FF416C,#FF4B2B); color: #fff; padding: 0.15rem 0.5rem; border-radius: 20px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+.hsd-no-result { padding: 1.75rem 1rem; text-align: center; color: #475569; font-size: 0.875rem; }
+
 /* ═══════════════════════════════════════════════════════════
    TRUST STRIP
 ═══════════════════════════════════════════════════════════ */
