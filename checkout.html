@@ -1201,133 +1201,37 @@
             <div class="step"><div class="step-num">3</div><span>Enter your <strong style="color:var(--text-2)">Transaction ID</strong> below &amp; upload screenshot</span></div>
           </div>
 
-          <!-- iOS notice: shown only on iPhone/iPad -->
+          <!-- Mobile UPI notice -->
           <div id="iosUpiNotice" style="display:none;background:rgba(255,65,108,0.08);border:1px solid rgba(255,65,108,0.25);border-radius:14px;padding:1.1rem 1.15rem;font-size:0.85rem;color:var(--text-2);line-height:1.6;">
-            <strong style="color:#fff;font-size:0.95rem;">How to pay on iPhone:</strong><br><br>
+            <strong style="color:#fff;font-size:0.95rem;">How to pay:</strong><br><br>
             <strong style="color:var(--red);">Step 1:</strong> Take a screenshot of the QR code<br>
             <strong style="color:var(--red);">Step 2:</strong> Open PhonePe / GPay / Paytm<br>
             <strong style="color:var(--red);">Step 3:</strong> Scan QR from gallery — amount is pre-set<br><br>
             <span style="font-size:0.78rem;color:var(--text-3);">Or copy the UPI ID above and pay manually in your app.</span>
           </div>
 
-          <div>
-            <div class="apps-label">Pay with App</div>
-          </div>
-
           <!-- App toast -->
           <div id="appToast" class="app-toast"></div>
 
-          <div class="app-grid">
-
-            <!-- PhonePe -->
-            <button class="app-btn" onclick="openPayApp('phonepe')"
-               style="--app-color:rgba(95,37,159,0.15);--app-border:rgba(95,37,159,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="#5F259F"/>
-                  <!-- PhonePe P logo -->
-                  <path d="M17 13h10a6 6 0 010 12h-4v8h-4V13h-2z" fill="white"/>
-                  <path d="M23 25h4a6 6 0 000-12h-4v12z" fill="#CBB3F0"/>
-                  <circle cx="34" cy="34" r="5" fill="#8B5CF6"/>
-                  <path d="M32 34l1.5 1.5L36 32" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <span class="app-name">PhonePe</span>
+          <!-- Single Pay Now button — opens native UPI app chooser on Android -->
+          <div id="payAppSection">
+            <button onclick="openPayApp('upi')" style="
+              width:100%;padding:1rem;border:none;border-radius:14px;
+              background:linear-gradient(135deg,#7B2FF7,#F107A3);
+              color:#fff;font-family:'Space Grotesk',sans-serif;
+              font-size:1.1rem;font-weight:700;cursor:pointer;
+              display:flex;align-items:center;justify-content:center;gap:10px;
+              transition:transform 0.2s,box-shadow 0.2s;
+              box-shadow:0 4px 20px rgba(123,47,247,0.3);">
+              <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                <rect width="48" height="48" rx="14" fill="rgba(255,255,255,0.15)"/>
+                <text x="24" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="900" fill="white">UPI</text>
+              </svg>
+              Pay Now with UPI
             </button>
-
-            <!-- Google Pay -->
-            <button class="app-btn" onclick="openPayApp('gpay')"
-               style="--app-color:rgba(66,133,244,0.1);--app-border:rgba(66,133,244,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="#fff"/>
-                  <!-- G logo -->
-                  <path d="M34.6 24.2c0-.7-.1-1.4-.2-2H24v3.8h6a5.1 5.1 0 01-2.2 3.4v2.8h3.6c2.1-2 3.2-4.8 3.2-8z" fill="#4285F4"/>
-                  <path d="M24 35c3 0 5.5-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6h-3.7v2.9C16.1 32.9 19.8 35 24 35z" fill="#34A853"/>
-                  <path d="M17.7 25.9a6.8 6.8 0 010-3.8v-2.9h-3.7a11 11 0 000 9.7l3.7-2.9z" fill="#FBBC05"/>
-                  <path d="M24 17.5c1.6 0 3.1.6 4.2 1.7l3.2-3.2C29.5 14.1 27 13 24 13c-4.2 0-7.9 2.4-9.7 5.9l3.7 2.9c.9-2.7 3.4-4.3 6-4.3z" fill="#EA4335"/>
-                  <!-- Pay text -->
-                  <text x="24" y="44" text-anchor="middle" font-family="'Product Sans',Arial,sans-serif" font-size="7" font-weight="700" fill="#5F6368">Pay</text>
-                </svg>
-              </div>
-              <span class="app-name">Google Pay</span>
-            </button>
-
-            <!-- BHIM -->
-            <button class="app-btn" onclick="openPayApp('bhim')"
-               style="--app-color:rgba(19,119,191,0.12);--app-border:rgba(19,119,191,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="#0B3D91"/>
-                  <!-- Indian flag tricolor stripe at top -->
-                  <rect x="0" y="0" width="48" height="7" rx="0" fill="#FF9933"/>
-                  <rect x="0" y="0" width="48" height="5" rx="0" fill="#FF9933"/>
-                  <rect x="0" y="5" width="48" height="5" fill="white"/>
-                  <rect x="0" y="10" width="48" height="5" fill="#138808"/>
-                  <!-- BHIM text -->
-                  <text x="24" y="32" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="white" letter-spacing="1">BHIM</text>
-                  <!-- UPI text -->
-                  <text x="24" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#90CAF9">UPI</text>
-                </svg>
-              </div>
-              <span class="app-name">BHIM UPI</span>
-            </button>
-
-            <!-- Paytm -->
-            <button class="app-btn" onclick="openPayApp('paytm')"
-               style="--app-color:rgba(0,186,242,0.1);--app-border:rgba(0,186,242,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="#00BAF2"/>
-                  <!-- Paytm wordmark style -->
-                  <text x="24" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="900" fill="#002970">paytm</text>
-                  <!-- underline accent -->
-                  <rect x="10" y="24" width="28" height="2" rx="1" fill="#002970" opacity="0.4"/>
-                  <!-- "Bank" text -->
-                  <text x="24" y="36" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" font-weight="700" fill="#002970">PAYMENTS BANK</text>
-                </svg>
-              </div>
-              <span class="app-name">Paytm</span>
-            </button>
-
-            <!-- Amazon Pay -->
-            <button class="app-btn" onclick="openPayApp('amazonpay')"
-               style="--app-color:rgba(255,153,0,0.1);--app-border:rgba(255,153,0,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="#232F3E"/>
-                  <!-- amazon text -->
-                  <text x="24" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="700" fill="white">amazon</text>
-                  <!-- signature arrow smile -->
-                  <path d="M14 28 Q24 34 34 28" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-                  <path d="M31.5 26.5 L34 28 L31.5 30" stroke="#FF9900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                  <!-- pay text -->
-                  <text x="24" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#FF9900">Pay</text>
-                </svg>
-              </div>
-              <span class="app-name">Amazon Pay</span>
-            </button>
-
-            <!-- Any UPI App -->
-            <button class="app-btn" onclick="openPayApp('upi')"
-               style="--app-color:rgba(16,185,129,0.1);--app-border:rgba(16,185,129,0.5);">
-              <div class="app-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
-                  <rect width="48" height="48" rx="14" fill="url(#upiGrad)"/>
-                  <defs>
-                    <linearGradient id="upiGrad" x1="0" y1="0" x2="48" y2="48">
-                      <stop offset="0%" stop-color="#7B2FF7"/>
-                      <stop offset="100%" stop-color="#F107A3"/>
-                    </linearGradient>
-                  </defs>
-                  <!-- UPI official style -->
-                  <text x="24" y="23" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="900" fill="white">UPI</text>
-                  <text x="24" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" font-weight="600" fill="rgba(255,255,255,0.8)">UNIFIED PAYMENT</text>
-                </svg>
-              </div>
-              <span class="app-name">Any UPI App</span>
-            </button>
-
+            <p style="text-align:center;font-size:0.75rem;color:var(--text-3);margin-top:0.6rem;">
+              Opens PhonePe, GPay, Paytm or any installed UPI app
+            </p>
           </div>
 
         </div>
@@ -1659,30 +1563,10 @@
         return;
       }
 
-      /* Build URLs */
-      const upiUniversal = `upi://pay?${base}`;
+      /* Use upi://pay? for all — triggers native Android app chooser */
+      const upiUrl = `upi://pay?${base}`;
 
-      const androidIntents = {
-        phonepe  : `intent://pay?${base}#Intent;scheme=phonepe;package=com.phonepe.app;S.browser_fallback_url=https%3A%2F%2Fphonepe.com;end`,
-        gpay     : `intent://upi/pay?${base}#Intent;scheme=tez;package=com.google.android.apps.nbu.paisa.user;S.browser_fallback_url=https%3A%2F%2Fpay.google.com;end`,
-        bhim     : `intent://pay?${base}#Intent;scheme=upi;package=in.org.npci.upiapp;S.browser_fallback_url=https%3A%2F%2Fbhimupi.org.in;end`,
-        paytm    : `intent://pay?${base}#Intent;scheme=paytm;package=net.one97.paytm;S.browser_fallback_url=https%3A%2F%2Fpaytm.com;end`,
-        amazonpay: `intent://pay?${base}#Intent;scheme=amazonpay;package=in.amazon.mShop.android.shopping;S.browser_fallback_url=https%3A%2F%2Fpay.amazon.in;end`,
-        upi      : upiUniversal,
-      };
-
-      const iosSchemes = {
-        phonepe  : `phonepe://pay?${base}`,
-        gpay     : `gpay://upi/pay?${base}`,   /* correct iOS GPay scheme */
-        bhim     : `upi://pay?${base}`,
-        paytm    : `paytmmp://pay?${base}`,
-        amazonpay: `upi://pay?${base}`,         /* Amazon Pay iOS fallback */
-        upi      : upiUniversal,
-      };
-
-      const url = isAndroid
-        ? (androidIntents[app] || upiUniversal)
-        : (iosSchemes[app]    || upiUniversal);
+      const url = upiUrl;
 
       /* Mark payment as interacted */
       paymentInteracted = true;
@@ -1713,7 +1597,7 @@
       }, 2500);
     }
 
-    /* iOS: hide app buttons (deep links don't work), show QR guidance */
+    /* iOS: hide app buttons (deep links don't work on iOS Chrome) */
     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       const notice = document.getElementById('iosUpiNotice');
       if (notice) notice.style.display = 'block';
