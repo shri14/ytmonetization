@@ -1201,6 +1201,12 @@
             <div class="step"><div class="step-num">3</div><span>Enter your <strong style="color:var(--text-2)">Transaction ID</strong> below &amp; upload screenshot</span></div>
           </div>
 
+          <!-- iOS notice: shown only on iPhone/iPad -->
+          <div id="iosUpiNotice" style="display:none;background:rgba(255,65,108,0.08);border:1px solid rgba(255,65,108,0.25);border-radius:12px;padding:0.85rem 1rem;font-size:0.82rem;color:var(--text-2);line-height:1.5;">
+            📱 <strong style="color:#fff;">iPhone detected:</strong> UPI apps on iOS don't support deep links from Chrome.<br>
+            Please <strong style="color:var(--red);">scan the QR code</strong> on the left with PhonePe / GPay / Paytm — the amount is already set.
+          </div>
+
           <div>
             <div class="apps-label">Pay with App</div>
           </div>
@@ -1622,13 +1628,11 @@
     document.getElementById('stepAmt').textContent           = '₹' + parseInt(plan.price).toLocaleString('en-IN');
     document.getElementById('upiIdText').value               = UPI_ID;
 
-    /* Build QR — use static branded QR if available, else generate dynamically */
-    const upiLink   = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.price}&cu=INR&tn=YTMonetization-${plan.title.replace(/ /g,'+')}&tr=YTM${Date.now()}`;
+    /* Build dynamic QR for this specific order (amount + plan baked in) */
+    const upiLink   = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${plan.price}&cu=INR&tn=${encodeURIComponent('YTMonetization ' + plan.title)}&tr=YTM${Date.now()}`;
     const dynamicQR = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(upiLink)}`;
     const qrEl      = document.getElementById('qrImg');
-    /* Try static branded QR first; fall back to dynamic if missing */
-    qrEl.onerror = () => { qrEl.onerror = null; qrEl.src = dynamicQR; };
-    qrEl.src = 'qr-payment.png';
+    qrEl.src = dynamicQR;
 
     /* ── PAYMENT APP DEEP LINKS ── */
     function openPayApp(app) {
@@ -1704,6 +1708,12 @@
           showAppToast('App not installed? Try another app or scan the QR code.');
         }
       }, 2500);
+    }
+
+    /* Show iOS notice if on iPhone/iPad */
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      const notice = document.getElementById('iosUpiNotice');
+      if (notice) notice.style.display = 'block';
     }
 
     function showAppToast(msg) {
