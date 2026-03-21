@@ -997,12 +997,22 @@
       function buildDropdown(q) {
         q = q.trim().toLowerCase();
         const all = getPlans().filter(p => p.active !== false);
-        const results = !q ? all : all.filter(p =>
-          p.title.toLowerCase().includes(q) ||
-          p.platform.toLowerCase().includes(q) ||
-          (p.service || '').toLowerCase().includes(q) ||
-          String(p.price).includes(q) ||
-          (p.features || []).some(f => f.toLowerCase().includes(q))
+
+        // normalise field names — admin may store 'name' OR 'title'
+        const norm = p => ({
+          ...p,
+          _title:   String(p.title || p.name || 'Plan'),
+          _service: String(p.service || p.detail || ''),
+          _price:   parseInt(p.price) || 0,
+        });
+
+        const normed = all.map(norm);
+        const results = !q ? normed : normed.filter(p =>
+          p._title.toLowerCase().includes(q) ||
+          (p.platform || '').toLowerCase().includes(q) ||
+          p._service.toLowerCase().includes(q) ||
+          String(p._price).includes(q) ||
+          (p.features || []).some(f => String(f).toLowerCase().includes(q))
         );
 
         if (!results.length) {
@@ -1012,20 +1022,26 @@
         }
 
         const groups = {};
-        results.forEach(p => { if (!groups[p.platform]) groups[p.platform] = []; groups[p.platform].push(p); });
+        results.forEach(p => {
+          const plat = p.platform || 'Other';
+          if (!groups[plat]) groups[plat] = [];
+          groups[plat].push(p);
+        });
 
         let html = '';
         Object.entries(groups).forEach(([plat, plans]) => {
           html += `<div class="hsd-label">${plat}</div>`;
           plans.forEach(p => {
             const badge = p.badge ? `<span class="hsd-badge">${p.badge}</span>` : '';
+            const grad  = PLAT_GRAD[plat] || PLAT_GRAD['YouTube'];
+            const svg   = PLAT_SVG[plat]  || PLAT_SVG['YouTube'];
             html += `<a href="checkout.html?plan=${p.id}" class="hsd-item">
-              <div class="hsd-ico" style="background:${PLAT_GRAD[plat]}">${PLAT_SVG[plat]}</div>
+              <div class="hsd-ico" style="background:${grad}">${svg}</div>
               <div class="hsd-info">
-                <div class="hsd-name">${p.title}${badge}</div>
-                <div class="hsd-meta">${p.service || ''}</div>
+                <div class="hsd-name">${p._title}${badge}</div>
+                <div class="hsd-meta">${p._service}</div>
               </div>
-              <div class="hsd-price">₹${parseInt(p.price).toLocaleString('en-IN')}</div>
+              <div class="hsd-price">₹${p._price.toLocaleString('en-IN')}</div>
             </a>`;
           });
         });

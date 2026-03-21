@@ -196,7 +196,7 @@ body {
   min-height: 100vh;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
+  position: relative; overflow: visible;
   padding: 120px 1.5rem 80px;
 }
 
@@ -243,6 +243,7 @@ body {
   text-align: center;
   display: flex; flex-direction: column;
   align-items: center; gap: 1.5rem;
+  overflow: visible; /* allow search dropdown to overflow */
 }
 
 .hero-badge {
@@ -398,27 +399,30 @@ body {
   position: relative;
   width: 100%; max-width: 580px;
   animation: fadeInUp 0.8s ease 0.35s both;
+  /* Must sit above hero-stats which comes after in DOM */
+  z-index: 50;
 }
 .hero-search-box {
   display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(15,18,30,0.75);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 14px;
   padding: 0 1.1rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition: border-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 .hero-search-box:focus-within {
-  border-color: rgba(255,65,108,0.5);
-  box-shadow: 0 0 0 4px rgba(255,65,108,0.1), 0 8px 40px rgba(0,0,0,0.3);
+  border-color: rgba(255,65,108,0.55);
+  box-shadow: 0 0 0 4px rgba(255,65,108,0.12), 0 8px 40px rgba(0,0,0,0.5);
 }
 .hero-search-input {
   flex: 1; background: none; border: none; outline: none;
   color: #F1F5F9;
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
-  padding: 0.85rem 0;
+  padding: 0.9rem 0;
 }
 .hero-search-input::placeholder { color: #475569; }
 .hero-search-clear {
@@ -431,14 +435,15 @@ body {
 .hero-search-clear:hover { color: #fff; background: rgba(255,255,255,0.1); }
 .hero-search-clear.visible { display: flex; }
 .hero-search-dropdown {
-  position: absolute; top: calc(100% + 10px); left: 0; right: 0;
-  background: #0D1117;
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  background: #0A0D16;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.7);
-  display: none; z-index: 200;
-  max-height: 380px; overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.85);
+  display: none;
+  z-index: 9999; /* always on top */
+  max-height: 360px; overflow-y: auto;
 }
 .hero-search-dropdown.open { display: block; }
 .hero-search-dropdown::-webkit-scrollbar { width: 4px; }
