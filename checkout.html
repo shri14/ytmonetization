@@ -1623,7 +1623,7 @@
     document.getElementById('upiIdText').value               = UPI_ID;
 
     /* Build QR — use static branded QR if available, else generate dynamically */
-    const upiLink   = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.price}&cu=INR&tn=YTMonetization-${plan.title.replace(/ /g,'+')}`;
+    const upiLink   = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.price}&cu=INR&tn=YTMonetization-${plan.title.replace(/ /g,'+')}&tr=YTM${Date.now()}`;
     const dynamicQR = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(upiLink)}`;
     const qrEl      = document.getElementById('qrImg');
     /* Try static branded QR first; fall back to dynamic if missing */
@@ -1636,7 +1636,8 @@
       const name = encodeURIComponent(UPI_NAME);
       const amt  = plan.price;
       const tn   = encodeURIComponent('YTMonetization ' + plan.title);
-      const base = `pa=${enc}&pn=${name}&am=${amt}&cu=INR&tn=${tn}`;
+      const tr   = `YTM${Date.now()}`;
+      const base = `pa=${enc}&pn=${name}&am=${amt}&cu=INR&tn=${tn}&tr=${tr}`;
 
       const ua        = navigator.userAgent || '';
       const isAndroid = /Android/i.test(ua);
