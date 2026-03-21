@@ -1234,30 +1234,40 @@ body {
   .btn-cta-whatsapp, .btn-cta-secondary { justify-content: center; }
 }
 
-/* ═══════════════ MOBILE PRICING CAROUSEL ═══════════════ */
-@media (max-width: 768px) {
+/* ═══════════════ MOBILE PRICING CAROUSEL (iPhone + Android) ═══════════════ */
+@media (max-width: 860px) {
   .pricing-grid {
     display: flex !important;
     flex-direction: row !important;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    /* iOS Safari */
     -webkit-overflow-scrolling: touch;
+    /* Both iOS & Android Chrome */
+    scroll-snap-type: x mandatory;
+    -webkit-scroll-snap-type: x mandatory;
     gap: 1rem;
     padding: 0.5rem 1.25rem 1.5rem;
+    /* hide scrollbar: Chrome/Safari/Android */
     scrollbar-width: none;
+    -ms-overflow-style: none;
     scroll-behavior: smooth;
-    /* negative margin to allow edge peek */
-    margin-left: -1rem;
-    margin-right: -1rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    /* prevent momentum scroll from triggering page scroll on Android */
+    overscroll-behavior-x: contain;
   }
   .pricing-grid::-webkit-scrollbar { display: none; }
 
   .pricing-grid .price-card {
-    min-width: 82vw;
-    max-width: 82vw;
+    min-width: 80vw;
+    max-width: 80vw;
     scroll-snap-align: center;
+    -webkit-scroll-snap-align: center;
     flex-shrink: 0;
     transform: none !important;
+    /* smooth tap on Android */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: pan-x;
   }
   .pricing-grid .price-card-featured {
     transform: none !important;
@@ -1276,11 +1286,16 @@ body {
     margin-top: 0.25rem;
     letter-spacing: 0.03em;
     animation: hintPulse 2s ease-in-out infinite;
+    -webkit-animation: hintPulse 2s ease-in-out infinite;
   }
   .carousel-hint svg { flex-shrink: 0; }
   @keyframes hintPulse {
     0%,100% { opacity: 0.5; transform: translateX(0); }
     50%      { opacity: 1;   transform: translateX(4px); }
+  }
+  @-webkit-keyframes hintPulse {
+    0%,100% { opacity: 0.5; -webkit-transform: translateX(0); }
+    50%      { opacity: 1;   -webkit-transform: translateX(4px); }
   }
 
   /* dot indicators */
@@ -1296,8 +1311,19 @@ body {
     background: rgba(255,255,255,0.18);
     border: none; cursor: pointer; padding: 0;
     transition: all 0.3s ease;
+    /* Android tap area */
+    min-width: 20px; min-height: 20px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .carousel-dot.active {
+  .carousel-dot::after {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    transition: all 0.3s ease;
+    display: block;
+  }
+  .carousel-dot.active::after {
     width: 22px;
     border-radius: 4px;
     background: linear-gradient(135deg, #FF416C, #FF4B2B);
@@ -1308,7 +1334,6 @@ body {
 }
 
 /* Hide hint & dots on desktop */
-@media (min-width: 769px) {
-  .carousel-hint, .carousel-dots, .carousel-wrap { display: contents; }
+@media (min-width: 861px) {
   .carousel-hint, .carousel-dots { display: none !important; }
 }
