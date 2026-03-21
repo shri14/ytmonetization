@@ -1602,7 +1602,7 @@
     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       const notice = document.getElementById('iosUpiNotice');
       if (notice) notice.style.display = 'block';
-      document.querySelectorAll('.app-grid, .apps-label').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.app-grid, .apps-label, #payAppSection').forEach(el => el.style.display = 'none');
       const s1 = document.getElementById('step1Text');
       if (s1) s1.textContent = 'Screenshot the QR code or copy UPI ID above';
     }
