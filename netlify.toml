@@ -1,0 +1,22 @@
+[build]
+  functions = "netlify/functions"
+
+# Redirect /api/orders → Netlify function (keeps frontend code unchanged)
+[[redirects]]
+  from   = "/api/orders"
+  to     = "/.netlify/functions/orders"
+  status = 200
+  force  = true
+
+# Redirect /api/orders/* as well (future-proof)
+[[redirects]]
+  from   = "/api/orders/*"
+  to     = "/.netlify/functions/orders"
+  status = 200
+  force  = true
+
+# All other routes serve index.html (SPA fallback)
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

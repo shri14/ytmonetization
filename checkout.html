@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — YTMonetization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #060912;
+      --border: rgba(255,255,255,0.08);
+      --red: #FF416C;
+      --red-2: #FF4B2B;
+      --green: #10B981;
+      --text: #F1F5F9;
+      --text-2: #94A3B8;
+      --text-3: #64748B;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* BG */
+    .page-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+    .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.12; }
+    .bg-orb-1 { width: 600px; height: 600px; background: var(--red); top: -200px; right: -100px; }
+    .bg-orb-2 { width: 500px; height: 500px; background: #7C3AED; bottom: -200px; left: -100px; }
+
+    /* NAVBAR */
+    nav {
+      position: relative; z-index: 10;
+      background: rgba(6,9,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.2rem;
+      color: #fff; text-decoration: none;
+    }
+    .logo-box {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-accent { color: var(--red); }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--text-2); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: #fff; }
+
+    /* MAIN */
+    main {
+      position: relative; z-index: 1;
+      flex: 1;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    .checkout-wrapper {
+      width: 100%; max-width: 960px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    /* PANEL */
+    .panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    /* SUMMARY */
+    .summary-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+    .summary-header { display: flex; align-items: center; gap: 12px; }
+    .summary-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .summary-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem; font-weight: 700; color: #fff;
+    }
+    .summary-header p { font-size: 0.8rem; color: var(--text-3); margin-top: 2px; }
+    .divider { height: 1px; background: var(--border); }
+    .detail-grid { display: flex; flex-direction: column; gap: 0.85rem; }
+    .detail-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .detail-label {
+      font-size: 0.8rem; font-weight: 600; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      white-space: nowrap; padding-top: 2px;
+    }
+    .detail-value { font-size: 0.9rem; color: var(--text-2); text-align: right; font-weight: 500; }
+    .price-highlight {
+      background: linear-gradient(135deg, rgba(255,65,108,0.12), rgba(255,75,43,0.06));
+      border: 1px solid rgba(255,65,108,0.25);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .price-highlight .label { font-size: 0.85rem; font-weight: 600; color: var(--text-2); }
+    .price-amount { font-family: 'Space Grotesk', sans-serif; font-size: 2.25rem; font-weight: 800; color: #fff; }
+    .price-amount .cur { font-size: 1.2rem; color: var(--red); font-weight: 700; }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      color: #6EE7B7;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+    }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+    .form-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; }
+    .form-subtitle { font-size: 0.875rem; color: var(--text-3); margin-top: 4px; }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    label {
+      font-size: 0.825rem; font-weight: 600; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+    .input-icon-ta { top: 18px; transform: none; }
+    input, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    textarea { resize: vertical; min-height: 100px; padding-top: 0.85rem; }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    input:focus, textarea:focus {
+      border-color: rgba(255,65,108,0.5);
+      background: rgba(255,65,108,0.04);
+      box-shadow: 0 0 0 3px rgba(255,65,108,0.1);
+    }
+    input.error { border-color: rgba(239,68,68,0.6); box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+    .error-msg { font-size: 0.78rem; color: #F87171; display: none; align-items: center; gap: 4px; }
+    .error-msg.show { display: flex; }
+    .char-count { font-size: 0.75rem; color: var(--text-3); text-align: right; margin-top: 4px; }
+
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%; padding: 1rem;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      border: none; border-radius: 14px;
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all 0.25s;
+      box-shadow: 0 8px 30px rgba(255,65,108,0.3);
+      position: relative; overflow: hidden;
+    }
+    .submit-btn::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.2s; }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(255,65,108,0.45); }
+    .submit-btn:hover::before { opacity: 1; }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-loader {
+      width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .submit-btn.loading .btn-loader { display: block; }
+    .submit-btn.loading .btn-text { opacity: 0.6; }
+    .secure-note { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.78rem; color: var(--text-3); }
+    #paidValidationErr.show { opacity:1 !important; transform:translateY(0) !important; pointer-events:all !important; }
+
+    /* ══════════════════════════════════════
+       FULLY RESPONSIVE — Mobile / Tablet / Desktop
+    ══════════════════════════════════════ */
+
+    /* ── Tablet (≤ 900px) ── */
+    @media (max-width: 900px) {
+      .checkout-wrapper { max-width: 700px; gap: 1.25rem; }
+      .panel { padding: 1.6rem; }
+    }
+
+    /* ── Tablet portrait / large phone (≤ 768px) ── */
+    @media (max-width: 768px) {
+      .checkout-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 560px;
+        gap: 1rem;
+      }
+      main { padding: 1.25rem 1rem 5rem; }   /* bottom room for thumb nav */
+      .price-amount { font-size: 1.9rem; }
+      .panel { border-radius: 20px; padding: 1.4rem; }
+
+      /* On tablet/large phone show summary collapsed by default */
+      .summary-panel .badges { gap: 0.4rem; }
+      .summary-header h2 { font-size: 1.1rem; }
+
+      /* Stack detail rows nicely */
+      .detail-label { font-size: 0.75rem; }
+      .detail-value { font-size: 0.85rem; }
+
+      /* Form */
+      .form-title { font-size: 1.15rem; }
+      input, textarea { font-size: 1rem; }   /* prevents iOS zoom */
+    }
+
+    /* ── Mobile (≤ 480px) — iPhone / Android ── */
+    @media (max-width: 480px) {
+      nav { padding: 0 1rem; }
+      .nav-inner { height: 58px; }
+      .nav-logo { font-size: 1.05rem; }
+      .logo-box { width: 30px; height: 30px; border-radius: 8px; }
+      .nav-back span { display: none; }   /* hide text, keep icon */
+
+      main { padding: 1rem 0.75rem 4.5rem; }
+
+      .checkout-wrapper { gap: 0.85rem; max-width: 100%; }
+
+      .panel { border-radius: 18px; padding: 1.15rem; }
+
+      /* Summary panel */
+      .summary-header { gap: 10px; }
+      .summary-icon { width: 40px; height: 40px; border-radius: 11px; }
+      .summary-header h2 { font-size: 1rem; }
+      .summary-header p { font-size: 0.72rem; }
+      .detail-row { gap: 0.6rem; }
+      .detail-label { font-size: 0.7rem; }
+      .detail-value { font-size: 0.8rem; }
+      .price-amount { font-size: 1.65rem; }
+      .price-highlight { padding: 1rem 1.1rem; }
+      .badge { font-size: 0.7rem; padding: 0.25rem 0.6rem; }
+
+      /* Form panel */
+      .form-title { font-size: 1.05rem; }
+      .form-subtitle { font-size: 0.8rem; }
+      label { font-size: 0.75rem; }
+      input, textarea {
+        font-size: 16px;    /* CRITICAL: prevents iOS auto-zoom */
+        padding: 0.9rem 1rem 0.9rem 2.6rem;
+        border-radius: 11px;
+      }
+      textarea { min-height: 80px; }
+      .submit-btn {
+        padding: 1rem;
+        font-size: 0.95rem;
+        border-radius: 13px;
+        min-height: 52px;   /* comfortable tap target */
+      }
+      .secure-note { font-size: 0.72rem; }
+    }
+
+    /* ── Very small phones (≤ 360px) — Galaxy A series, etc ── */
+    @media (max-width: 360px) {
+      .panel { padding: 1rem; border-radius: 16px; }
+      .price-amount { font-size: 1.5rem; }
+      .badges { gap: 0.3rem; }
+      .badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
+    }
+
+    /* PANEL ANIMATION */
+    .panel { animation: panelIn 0.5s cubic-bezier(0.4,0,0.2,1) both; }
+    .form-panel { animation-delay: 0.1s; }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       PAYMENT MODAL
+    ═══════════════════════════════════════════ */
+    .pay-backdrop {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(4,6,14,0.92);
+      backdrop-filter: blur(18px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .pay-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .pay-modal {
+      width: 100%; max-width: 780px;
+      background: #0F1520;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+      transform: scale(0.94) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+    }
+    .pay-backdrop.open .pay-modal { transform: scale(1) translateY(0); }
+
+    /* Modal Header */
+    .pay-header {
+      background: linear-gradient(135deg, rgba(255,65,108,0.15), rgba(124,58,237,0.1));
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 1.25rem 1.75rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .pay-header-left { display: flex; align-items: center; gap: 12px; }
+    .pay-header-lock {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pay-header-title { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .pay-header-sub { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; }
+    .pay-header-amount {
+      text-align: right;
+    }
+    .pay-header-amount .amt-label { font-size: 0.7rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+    .pay-header-amount .amt-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem; font-weight: 800; color: #fff;
+    }
+    .pay-header-amount .amt-val .c { color: var(--red); font-size: 1rem; }
+    .pay-close {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-2);
+      transition: all 0.2s;
+    }
+    .pay-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* Modal Body */
+    .pay-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    /* LEFT: QR */
+    .pay-qr-col {
+      padding: 2rem 1.75rem;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
+    }
+    .pay-qr-label {
+      font-size: 0.8rem; font-weight: 700; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* QR Wrapper */
+    .qr-wrap {
+      position: relative;
+      width: 216px; height: 216px;
+      border-radius: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: #fff;
+      padding: 8px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.4);
+      transition: box-shadow 0.3s;
+    }
+    .qr-wrap:hover { box-shadow: 0 0 0 2px rgba(255,65,108,0.5), 0 12px 40px rgba(0,0,0,0.5); }
+
+    .qr-img {
+      width: 100%; height: 100%;
+      border-radius: 8px;
+      display: block;
+    }
+    .qr-wrap { cursor: default; }
+
+    /* UTR Verification Section */
+    .verify-section {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 1.25rem 1.75rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.85rem;
+    }
+    .verify-header {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .verify-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .verify-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.92rem; font-weight: 700; color: #fff;
+    }
+    .verify-sub {
+      font-size: 0.75rem; color: var(--text-3); margin-top: 1px;
+    }
+    .utr-row {
+      display: flex; gap: 0.6rem; align-items: stretch;
+    }
+    .utr-input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #fff; font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 600;
+      padding: 0.8rem 1rem;
+      outline: none; transition: border-color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .utr-input::placeholder { color: var(--text-3); font-weight: 400; }
+    .utr-input:focus { border-color: rgba(16,185,129,0.5); }
+    .utr-input.error { border-color: rgba(239,68,68,0.6); }
+    .verify-btn {
+      background: linear-gradient(135deg, #10B981, #059669);
+      border: none; border-radius: 12px;
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem; font-weight: 700;
+      padding: 0.8rem 1.4rem;
+      cursor: pointer; white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 20px rgba(16,185,129,0.25);
+      transition: all 0.2s;
+      opacity: 0.4; pointer-events: none;
+    }
+    .verify-btn.active { opacity: 1; pointer-events: all; }
+    .verify-btn.active:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(16,185,129,0.4); }
+    .utr-error-msg {
+      font-size: 0.78rem; color: #F87171;
+      display: none; align-items: center; gap: 5px;
+    }
+    .utr-error-msg.show { display: flex; }
+    .utr-hint {
+      font-size: 0.73rem; color: var(--text-3);
+      display: flex; align-items: flex-start; gap: 5px; line-height: 1.5;
+    }
+    /* highlight after returning from app */
+    .verify-section.highlight {
+      border-radius: 0 0 16px 16px;
+      background: rgba(16,185,129,0.04);
+      border-color: rgba(16,185,129,0.2);
+      animation: verifyPulse 0.5s ease;
+    }
+    @keyframes verifyPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.35); }
+      70%  { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    @media (max-width: 768px) {
+      .verify-section { padding: 1rem 1.25rem 1.25rem; }
+      .utr-row { flex-direction: column; }
+      .verify-btn { width: 100%; justify-content: center; }
+    }
+
+    /* Timer */
+    .qr-timer-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.78rem; color: var(--text-3);
+      min-height: 22px;
+    }
+    .qr-timer {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      color: #10B981;
+      display: none;
+    }
+    .qr-timer.warning { color: #F59E0B; }
+    .qr-timer.expired { color: #EF4444; display: flex !important; }
+    .qr-timer.active { display: flex; align-items: center; gap: 5px; }
+    .timer-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #10B981;
+      animation: pulse-dot 1s ease infinite;
+    }
+    .qr-timer.warning .timer-dot { background: #F59E0B; }
+    @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* UPI ID */
+    .upi-box {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .upi-left { display: flex; flex-direction: column; gap: 2px; }
+    .upi-tag { font-size: 0.68rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; }
+    .upi-id { font-size: 0.875rem; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
+    .copy-btn {
+      background: rgba(255,65,108,0.1); border: 1px solid rgba(255,65,108,0.25);
+      border-radius: 8px; padding: 0.4rem 0.75rem;
+      color: var(--red); font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .copy-btn:hover { background: rgba(255,65,108,0.2); }
+    .copy-btn.copied { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #10B981; }
+
+    /* RIGHT: App Payment */
+    .pay-apps-col {
+      padding: 2rem 1.75rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+    .apps-label {
+      display: flex; align-items: center; gap: 0;
+      font-size: 0.78rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .apps-label::before, .apps-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .apps-label::before { margin-right: 10px; }
+    .apps-label::after  { margin-left: 10px; }
+
+    .app-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .app-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1rem 0.75rem;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .app-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--app-color, rgba(255,255,255,0.05));
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .app-btn { cursor: pointer; border: none; text-align: center; }
+    .app-btn:hover { border-color: var(--app-border, rgba(255,255,255,0.2)); transform: translateY(-2px); }
+    .app-btn:hover::before { opacity: 1; }
+    .app-btn:active { transform: scale(0.96); }
+    .app-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* App Toast */
+    .app-toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(30,34,48,0.97); border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-size: 0.85rem; font-weight: 500;
+      padding: 0.75rem 1.25rem; border-radius: 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 999; opacity: 0; pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap; max-width: 90vw; text-align: center;
+    }
+    .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .app-name { font-size: 0.78rem; font-weight: 700; color: var(--text-2); }
+
+    /* Confirmed via WhatsApp */
+    .paid-btn {
+      width: 100%; padding: 0.9rem;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border: none; border-radius: 13px;
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 6px 24px rgba(16,185,129,0.3);
+      transition: all 0.25s;
+    }
+    .paid-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(16,185,129,0.45); }
+
+    /* Steps */
+    .pay-steps {
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .step {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.8rem; color: var(--text-3); line-height: 1.5;
+    }
+    .step-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; color: var(--text-2);
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* Footer */
+    .pay-footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 0.9rem 1.75rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .pay-footer-trust {
+      display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+    }
+    .trust-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--text-3); }
+    .upi-logos { display: flex; align-items: center; gap: 8px; }
+    .upi-logo-pill {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 3px 8px;
+      font-size: 0.65rem; font-weight: 800; color: var(--text-2);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Payment Modal — Tablet (≤ 768px) ── */
+    @media (max-width: 768px) {
+      .pay-modal { max-width: 98vw; border-radius: 22px; }
+      .pay-body { grid-template-columns: 1fr; }
+      .pay-qr-col {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 1.5rem 1.5rem 1.25rem;
+        align-items: center;
+      }
+      .pay-apps-col { padding: 1.25rem 1.5rem 1.5rem; }
+      .qr-wrap { width: 190px; height: 190px; }
+      .pay-footer { justify-content: center; gap: 0.5rem; }
+      .trust-item span { display: none; }  /* keep icons, hide text */
+    }
+
+    /* ── Payment Modal — Mobile (≤ 480px) ── */
+    @media (max-width: 480px) {
+      .pay-backdrop { padding: 0; align-items: flex-end; }
+      .pay-modal {
+        border-radius: 24px 24px 0 0;   /* bottom-sheet style */
+        max-width: 100%;
+        max-height: 95dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .pay-header {
+        padding: 1rem 1.1rem;
+        position: sticky; top: 0; z-index: 2;
+        background: #0F1520;
+      }
+      .pay-header-title { font-size: 0.88rem; }
+      .pay-header-sub   { font-size: 0.7rem; }
+      .pay-header-amount .amt-val { font-size: 1.3rem; }
+      .pay-close { width: 30px; height: 30px; }
+
+      .pay-qr-col { padding: 1.25rem 1rem; }
+      .qr-wrap { width: 170px; height: 170px; }
+      .upi-box { padding: 0.6rem 0.85rem; }
+      .upi-id { font-size: 0.82rem; }
+      .copy-btn { padding: 0.4rem 0.6rem; font-size: 0.7rem; }
+
+      .pay-apps-col { padding: 1rem; gap: 1rem; }
+      .app-grid { gap: 0.6rem; }
+      .app-btn { padding: 0.85rem 0.5rem; border-radius: 12px; }
+      .app-icon { width: 42px; height: 42px; }
+      .app-name { font-size: 0.72rem; }
+      .step { font-size: 0.75rem; }
+      .step-num { width: 18px; height: 18px; font-size: 0.6rem; }
+
+      .paid-btn { padding: 0.85rem; font-size: 0.88rem; min-height: 50px; }
+
+      .pay-footer { padding: 0.75rem 1rem; gap: 0.35rem; }
+      .upi-logo-pill { font-size: 0.6rem; padding: 2px 6px; }
+
+      /* Upload step */
+      .upload-step-inner { padding: 1.25rem 1rem; gap: 1rem; }
+      .drop-zone { min-height: 160px; }
+      .upload-actions { flex-direction: column; }
+      .back-step-btn, .confirm-upload-btn { width: 100%; justify-content: center; }
+
+      /* Toast */
+      .app-toast { bottom: 1rem; font-size: 0.8rem; padding: 0.65rem 1rem; border-radius: 10px; }
+    }
+
+    /* ── Receipt modal — Mobile ── */
+    @media (max-width: 480px) {
+      .success-modal-overlay { padding: 0; align-items: flex-end; }
+      .receipt-card {
+        border-radius: 24px 24px 0 0;
+        max-width: 100%;
+        max-height: 95dvh;
+        overflow-y: auto;
+      }
+      .rc-header { padding: 1.1rem 1.1rem; gap: 10px; }
+      .rc-check { width: 44px; height: 44px; }
+      .rc-title { font-size: 1.05rem; }
+      .rc-ref-bar { padding: 0.6rem 1.1rem; }
+      .rc-block { padding: 0.9rem 1.1rem; gap: 0.45rem; }
+      .rc-grid { grid-template-columns: 1fr; }
+      .rc-block:first-child { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .rc-ss-badge { padding: 0.55rem 1.1rem; }
+      .rc-owner-notice { padding: 0.85rem 1.1rem; gap: 10px; }
+      .rc-back-btn { padding: 0.85rem; }
+    }
+
+    /* ── iOS Safari safe-area insets ── */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .pay-modal, .receipt-card {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      main { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+    }
+
+    /* ── Prevent horizontal scroll on all screens ── */
+    body { overflow-x: hidden; }
+
+    /* ═══════════════════════════════════════════
+       UPLOAD STEP
+    ═══════════════════════════════════════════ */
+    .upload-step {
+      display: none;
+      animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .upload-step.active { display: block; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .upload-step-inner {
+      padding: 2rem 1.75rem;
+      display: flex; flex-direction: column; gap: 1.4rem;
+    }
+    .upload-heading {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .upload-icon-wrap {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(255,65,108,0.1);
+      border: 1px solid rgba(255,65,108,0.25);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .upload-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+    }
+    .upload-sub { font-size: 0.8rem; color: var(--text-3); margin-top: 3px; }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 1.5px dashed rgba(255,65,108,0.3);
+      border-radius: 16px;
+      background: rgba(255,65,108,0.03);
+      min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .drop-zone.drag-over {
+      border-color: rgba(255,65,108,0.7);
+      background: rgba(255,65,108,0.08);
+      box-shadow: 0 0 0 4px rgba(255,65,108,0.1);
+    }
+    .drop-idle {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.5rem; padding: 2rem; text-align: center;
+    }
+    .drop-icon { margin-bottom: 4px; }
+    .drop-text { font-size: 0.9rem; font-weight: 600; color: var(--text-2); }
+    .drop-or { font-size: 0.75rem; color: var(--text-3); }
+    .browse-btn {
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      border: none; border-radius: 10px;
+      color: #fff; font-family: 'Inter', sans-serif;
+      font-size: 0.825rem; font-weight: 700;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(255,65,108,0.3);
+    }
+    .browse-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,65,108,0.45); }
+    .drop-hint { font-size: 0.72rem; color: var(--text-3); margin-top: 4px; }
+
+    /* Preview */
+    .drop-preview {
+      display: none;
+      flex-direction: column; align-items: center;
+      gap: 0.75rem; padding: 1.25rem;
+      width: 100%;
+    }
+    .drop-preview.show { display: flex; }
+    .drop-idle.hidden { display: none; }
+    .drop-preview img {
+      max-height: 160px; max-width: 100%;
+      border-radius: 10px;
+      object-fit: contain;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .preview-info { text-align: center; }
+    .preview-filename { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .preview-size { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; }
+    .remove-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 8px; color: #F87171;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 0.35rem 0.85rem; cursor: pointer; transition: all 0.2s;
+    }
+    .remove-btn:hover { background: rgba(239,68,68,0.2); }
+
+    /* Actions */
+    .upload-actions {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .back-step-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; color: var(--text-2);
+      font-size: 0.825rem; font-weight: 600;
+      padding: 0.7rem 1rem; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .back-step-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .confirm-upload-btn {
+      flex: 1; padding: 0.85rem;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      border: none; border-radius: 12px;
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 6px 24px rgba(255,65,108,0.3);
+      transition: all 0.25s;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .confirm-upload-btn:not(:disabled) {
+      opacity: 1; pointer-events: all;
+    }
+    .confirm-upload-btn:not([disabled]):hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,65,108,0.45); }
+    .upload-note {
+      display: flex; align-items: flex-start; gap: 6px;
+      font-size: 0.75rem; color: var(--text-3); line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════
+       CUSTOMER RECEIPT
+    ═══════════════════════════════════════════ */
+    .success-modal-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(4,6,14,0.96);
+      backdrop-filter: blur(18px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .success-modal-overlay.show { opacity: 1; pointer-events: all; }
+
+    .receipt-card {
+      background: #0F1520;
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 24px;
+      width: 100%; max-width: 520px;
+      overflow: hidden;
+      transform: scale(0.94) translateY(16px);
+      transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+    }
+    .success-modal-overlay.show .receipt-card { transform: scale(1) translateY(0); }
+
+    .rc-header {
+      display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));
+      border-bottom: 1px solid rgba(16,185,129,0.15);
+      padding: 1.4rem 1.5rem;
+    }
+    .rc-check {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(16,185,129,0.12);
+      border: 2px solid rgba(16,185,129,0.4);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      animation: rcPulse 2.5s ease infinite;
+    }
+    @keyframes rcPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+      50% { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+    }
+    .rc-title { font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:800; color:#fff; }
+    .rc-sub { font-size:0.78rem; color:var(--text-3); margin-top:3px; }
+
+    .rc-ref-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.7rem 1.5rem;
+      font-size: 0.78rem; color: var(--text-3);
+    }
+    .rc-ref-bar strong { font-family:'Space Grotesk',sans-serif; font-size:0.9rem; color:#fff; letter-spacing:0.04em; }
+
+    .rc-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .rc-block {
+      padding: 1.1rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.55rem;
+    }
+    .rc-block:first-child { border-right: 1px solid rgba(255,255,255,0.06); }
+    .rc-block-title {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.7rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .rc-row { display: flex; flex-direction: column; gap: 1px; }
+    .rk { font-size: 0.68rem; color: var(--text-3); font-weight: 600; }
+    .rv { font-size: 0.82rem; color: var(--text); font-weight: 500; word-break: break-all; }
+    .rv-green { color: #10B981; font-weight: 700; }
+    .rv-bold  { color: #fff; font-weight: 800; font-size: 1rem; font-family:'Space Grotesk',sans-serif; }
+    .rv-link  { color: var(--red); font-size: 0.72rem; word-break: break-all; }
+
+    .rc-ss-badge {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(16,185,129,0.07);
+      border-bottom: 1px solid rgba(16,185,129,0.15);
+      padding: 0.65rem 1.5rem;
+      font-size: 0.78rem; font-weight: 600; color: #10B981;
+    }
+
+    .rc-owner-notice {
+      display: flex; align-items: center; gap: 12px;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(37,211,102,0.04);
+    }
+    .rc-notice-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(37,211,102,0.12);
+      border: 1px solid rgba(37,211,102,0.25);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .rc-notice-title { font-size:0.82rem; font-weight:700; color:#fff; }
+    .rc-notice-sub   { font-size:0.72rem; color:var(--text-3); margin-top:2px; }
+    .rc-notice-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #10B981;
+      margin-left: auto; flex-shrink: 0;
+      animation: rcPulse 1.5s ease infinite;
+    }
+    .rc-back-btn {
+      display: block; text-align: center;
+      padding: 1rem; font-size: 0.82rem;
+      color: var(--text-3); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .rc-back-btn:hover { color: #fff; }
+    /* receipt grid stacks — handled in main responsive block below */
+
+    /* order ref badge */
+    .order-ref {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem; color: var(--text-3);
+    }
+    .order-ref span { color: var(--text-2); font-weight: 600; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <div class="page-bg">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-box">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 4l10 5L5 14V4z" fill="white"/></svg>
+        </div>
+        YT<span class="logo-accent">Monetization</span>
+      </a>
+      <a href="index.html" class="nav-back">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Back to Plans
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="checkout-wrapper">
+
+      <!-- LEFT: Order Summary -->
+      <div class="panel summary-panel">
+        <div class="summary-header">
+          <div class="summary-icon" id="summaryIcon"></div>
+          <div>
+            <h2 id="serviceTitle">Loading…</h2>
+            <p>Robin YT Expert · Robin Thakur</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="detail-grid">
+          <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">Robin YT Expert</span></div>
+          <div class="detail-row"><span class="detail-label">Owner</span><span class="detail-value">Robin Thakur</span></div>
+          <div class="detail-row"><span class="detail-label">Service</span><span class="detail-value" id="detServiceName">—</span></div>
+          <div class="detail-row"><span class="detail-label">Detail</span><span class="detail-value" id="detDetail">—</span></div>
+          <div class="detail-row"><span class="detail-label">Start Time</span><span class="detail-value" id="detStart">—</span></div>
+          <div class="detail-row"><span class="detail-label">Complete</span><span class="detail-value" id="detComplete">—</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="price-highlight">
+          <div class="label">Total Price</div>
+          <div class="price-amount"><span class="cur">₹</span><span id="detPrice">—</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round"/></svg>100% Real & Safe</span>
+          <span class="badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round"/></svg>No Login Needed</span>
+          <span class="badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round"/></svg>Lifetime Guarantee</span>
+          <span class="badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round"/></svg>24/7 Support</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Order Form -->
+      <div class="panel form-panel">
+        <div>
+          <h3 class="form-title">Complete Your Order</h3>
+          <p class="form-subtitle">Fill in your details and proceed to secure payment.</p>
+        </div>
+
+        <form id="orderForm" novalidate>
+          <div class="form-group" style="margin-bottom:1.1rem;">
+            <label for="profileLink" id="linkLabel">Your Profile / Channel Link</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M10.5 7.5l-3 3m1.5-5.25l.75-.75a3.182 3.182 0 014.5 4.5l-.75.75M6 10.5l-.75.75a3.182 3.182 0 01-4.5-4.5L1.5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <input type="url" id="profileLink" placeholder="https://youtube.com/channel/..." autocomplete="off" />
+            </div>
+            <span class="error-msg" id="linkError">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#F87171" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.5" stroke="#F87171" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Please enter a valid URL
+            </span>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.1rem;">
+            <label for="mobile">Mobile Number</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3.75 3h3l1.5 3.75-1.875 1.125a8.25 8.25 0 004.5 4.5L12 10.5l3.75 1.5v3A1.5 1.5 0 0114.25 16.5C7.5 16.5 1.5 10.5 1.5 3.75A1.5 1.5 0 013 2.25h.75v.75z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <input type="tel" id="mobile" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" />
+            </div>
+            <span class="error-msg" id="mobileError">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#F87171" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.5" stroke="#F87171" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Enter a valid 10-digit number
+            </span>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label for="message">Your Message <span style="color:var(--text-3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+            <div class="input-wrap">
+              <span class="input-icon input-icon-ta">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2.25 3h13.5v9.75H9.75l-3 3v-3H2.25V3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </span>
+              <textarea id="message" placeholder="Any special instructions or notes…" maxlength="300"></textarea>
+            </div>
+            <div class="char-count"><span id="charCount">0</span>/300</div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <div class="btn-loader"></div>
+            <span class="btn-text">Proceed to Pay</span>
+          </button>
+
+          <p class="secure-note" style="margin-top:0.75rem;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l5 2.5v3.5c0 3-2.5 5.3-5 6C4.5 12.8 2 10.5 2 7.5V4l5-2.5z" stroke="#64748B" stroke-width="1.2" stroke-linejoin="round"/><path d="M4.5 7l1.5 1.5L9 5" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/></svg>
+            No password required. 100% secure.
+          </p>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════
+       PAYMENT MODAL
+  ═══════════════════════════════════ -->
+  <div class="pay-backdrop" id="payBackdrop">
+    <div class="pay-modal" id="payModal">
+
+      <!-- Header -->
+      <div class="pay-header">
+        <div class="pay-header-left">
+          <div class="pay-header-lock">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5.25 8.25V6a3.75 3.75 0 017.5 0v2.25M3.75 8.25h10.5c.828 0 1.5.672 1.5 1.5v5.25c0 .828-.672 1.5-1.5 1.5H3.75c-.828 0-1.5-.672-1.5-1.5V9.75c0-.828.672-1.5 1.5-1.5z" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="pay-header-title">Secure UPI Payment</div>
+            <div class="pay-header-sub" id="modalServiceTitle">—</div>
+          </div>
+        </div>
+        <div class="pay-header-amount">
+          <div class="amt-label">Amount Due</div>
+          <div class="amt-val"><span class="c">₹</span><span id="modalAmt">—</span></div>
+        </div>
+        <button class="pay-close" id="payClose" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="pay-body" id="payBody">
+
+        <!-- QR Side -->
+        <div class="pay-qr-col">
+          <div class="pay-qr-label">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:5px"><rect x="1" y="1" width="5" height="5" rx="1" stroke="#94A3B8" stroke-width="1.2"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="#94A3B8" stroke-width="1.2"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="#94A3B8" stroke-width="1.2"/><rect x="9.5" y="9.5" width="2" height="2" rx="0.4" fill="#94A3B8"/></svg>
+            Scan QR to Pay
+          </div>
+
+          <div class="qr-wrap" id="qrWrap">
+            <img id="qrImg" class="qr-img" src="" alt="UPI QR Code" />
+          </div>
+
+          <div style="font-size:0.72rem;color:var(--text-3);text-align:center;margin-top:2px;">
+            Scan with any UPI app to pay
+          </div>
+
+          <div class="upi-box">
+            <div class="upi-left">
+              <span class="upi-tag">UPI ID</span>
+              <input type="text" class="upi-id" id="upiIdText" value="robin@ybl" readonly
+                style="background:none;border:none;outline:none;color:inherit;font:inherit;width:100%;cursor:text;-webkit-user-select:all;user-select:all;"
+                onclick="this.select()" />
+            </div>
+            <button class="copy-btn" id="copyUpiBtn">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 8.5V2.5a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- App Payment Side -->
+        <div class="pay-apps-col">
+
+          <div class="pay-steps">
+            <div class="step"><div class="step-num">1</div><span>Scan the QR code or choose a payment app below</span></div>
+            <div class="step"><div class="step-num">2</div><span>Enter amount <strong style="color:var(--text-2)" id="stepAmt">₹799</strong> and complete the payment</span></div>
+            <div class="step"><div class="step-num">3</div><span>Enter your <strong style="color:var(--text-2)">Transaction ID</strong> below &amp; upload screenshot</span></div>
+          </div>
+
+          <div>
+            <div class="apps-label">Pay with App</div>
+          </div>
+
+          <!-- App toast -->
+          <div id="appToast" class="app-toast"></div>
+
+          <div class="app-grid">
+
+            <!-- PhonePe -->
+            <button class="app-btn" onclick="openPayApp('phonepe')"
+               style="--app-color:rgba(95,37,159,0.15);--app-border:rgba(95,37,159,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="#5F259F"/>
+                  <!-- PhonePe P logo -->
+                  <path d="M17 13h10a6 6 0 010 12h-4v8h-4V13h-2z" fill="white"/>
+                  <path d="M23 25h4a6 6 0 000-12h-4v12z" fill="#CBB3F0"/>
+                  <circle cx="34" cy="34" r="5" fill="#8B5CF6"/>
+                  <path d="M32 34l1.5 1.5L36 32" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="app-name">PhonePe</span>
+            </button>
+
+            <!-- Google Pay -->
+            <button class="app-btn" onclick="openPayApp('gpay')"
+               style="--app-color:rgba(66,133,244,0.1);--app-border:rgba(66,133,244,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="#fff"/>
+                  <!-- G logo -->
+                  <path d="M34.6 24.2c0-.7-.1-1.4-.2-2H24v3.8h6a5.1 5.1 0 01-2.2 3.4v2.8h3.6c2.1-2 3.2-4.8 3.2-8z" fill="#4285F4"/>
+                  <path d="M24 35c3 0 5.5-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6h-3.7v2.9C16.1 32.9 19.8 35 24 35z" fill="#34A853"/>
+                  <path d="M17.7 25.9a6.8 6.8 0 010-3.8v-2.9h-3.7a11 11 0 000 9.7l3.7-2.9z" fill="#FBBC05"/>
+                  <path d="M24 17.5c1.6 0 3.1.6 4.2 1.7l3.2-3.2C29.5 14.1 27 13 24 13c-4.2 0-7.9 2.4-9.7 5.9l3.7 2.9c.9-2.7 3.4-4.3 6-4.3z" fill="#EA4335"/>
+                  <!-- Pay text -->
+                  <text x="24" y="44" text-anchor="middle" font-family="'Product Sans',Arial,sans-serif" font-size="7" font-weight="700" fill="#5F6368">Pay</text>
+                </svg>
+              </div>
+              <span class="app-name">Google Pay</span>
+            </button>
+
+            <!-- BHIM -->
+            <button class="app-btn" onclick="openPayApp('bhim')"
+               style="--app-color:rgba(19,119,191,0.12);--app-border:rgba(19,119,191,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="#0B3D91"/>
+                  <!-- Indian flag tricolor stripe at top -->
+                  <rect x="0" y="0" width="48" height="7" rx="0" fill="#FF9933"/>
+                  <rect x="0" y="0" width="48" height="5" rx="0" fill="#FF9933"/>
+                  <rect x="0" y="5" width="48" height="5" fill="white"/>
+                  <rect x="0" y="10" width="48" height="5" fill="#138808"/>
+                  <!-- BHIM text -->
+                  <text x="24" y="32" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="white" letter-spacing="1">BHIM</text>
+                  <!-- UPI text -->
+                  <text x="24" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#90CAF9">UPI</text>
+                </svg>
+              </div>
+              <span class="app-name">BHIM UPI</span>
+            </button>
+
+            <!-- Paytm -->
+            <button class="app-btn" onclick="openPayApp('paytm')"
+               style="--app-color:rgba(0,186,242,0.1);--app-border:rgba(0,186,242,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="#00BAF2"/>
+                  <!-- Paytm wordmark style -->
+                  <text x="24" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="900" fill="#002970">paytm</text>
+                  <!-- underline accent -->
+                  <rect x="10" y="24" width="28" height="2" rx="1" fill="#002970" opacity="0.4"/>
+                  <!-- "Bank" text -->
+                  <text x="24" y="36" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" font-weight="700" fill="#002970">PAYMENTS BANK</text>
+                </svg>
+              </div>
+              <span class="app-name">Paytm</span>
+            </button>
+
+            <!-- Amazon Pay -->
+            <button class="app-btn" onclick="openPayApp('amazonpay')"
+               style="--app-color:rgba(255,153,0,0.1);--app-border:rgba(255,153,0,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="#232F3E"/>
+                  <!-- amazon text -->
+                  <text x="24" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="700" fill="white">amazon</text>
+                  <!-- signature arrow smile -->
+                  <path d="M14 28 Q24 34 34 28" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                  <path d="M31.5 26.5 L34 28 L31.5 30" stroke="#FF9900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <!-- pay text -->
+                  <text x="24" y="42" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#FF9900">Pay</text>
+                </svg>
+              </div>
+              <span class="app-name">Amazon Pay</span>
+            </button>
+
+            <!-- Any UPI App -->
+            <button class="app-btn" onclick="openPayApp('upi')"
+               style="--app-color:rgba(16,185,129,0.1);--app-border:rgba(16,185,129,0.5);">
+              <div class="app-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="border-radius:14px;">
+                  <rect width="48" height="48" rx="14" fill="url(#upiGrad)"/>
+                  <defs>
+                    <linearGradient id="upiGrad" x1="0" y1="0" x2="48" y2="48">
+                      <stop offset="0%" stop-color="#7B2FF7"/>
+                      <stop offset="100%" stop-color="#F107A3"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- UPI official style -->
+                  <text x="24" y="23" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="900" fill="white">UPI</text>
+                  <text x="24" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" font-weight="600" fill="rgba(255,255,255,0.8)">UNIFIED PAYMENT</text>
+                </svg>
+              </div>
+              <span class="app-name">Any UPI App</span>
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── UTR VERIFICATION (full-width, below both columns) ── -->
+      <div class="verify-section" id="verifySection">
+        <div class="verify-header">
+          <div class="verify-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#10B981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="verify-title">Payment Done? Enter Your Transaction ID</div>
+            <div class="verify-sub">Every UPI payment has a unique Transaction/UTR ID — required to confirm your order</div>
+          </div>
+        </div>
+
+        <div class="utr-row">
+          <input type="text" id="utrInput" class="utr-input"
+            placeholder="e.g. 504113261259  or  T2503211234ABCDE"
+            autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text" />
+          <button class="verify-btn" id="verifyBtn">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5l4 4 7-7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Confirm &amp; Continue →
+          </button>
+        </div>
+
+        <div class="utr-error-msg" id="utrErrorMsg">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#F87171" stroke-width="1.1"/><path d="M6.5 4v3M6.5 8.5v.5" stroke="#F87171" stroke-width="1.1" stroke-linecap="round"/></svg>
+          Please enter your Transaction ID to verify payment
+        </div>
+
+        <div class="utr-hint">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="6.5" cy="6.5" r="5.5" stroke="#64748B" stroke-width="1.1"/><path d="M6.5 5.5v4M6.5 4v.5" stroke="#64748B" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span>Find in your payment app → <strong style="color:var(--text-2)">Transaction History</strong> → tap the transaction → copy the <strong style="color:var(--text-2)">UTR / Reference Number</strong></span>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: UPLOAD SCREENSHOT ── -->
+      <div class="upload-step" id="uploadStep">
+        <div class="upload-step-inner">
+
+          <div class="upload-heading">
+            <div class="upload-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 3v13M8 8l5-5 5 5" stroke="#FF416C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18v2a2 2 0 002 2h14a2 2 0 002-2v-2" stroke="#FF416C" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="upload-title">Upload Payment Screenshot</div>
+              <div class="upload-sub">Attach proof of payment to speed up order processing</div>
+            </div>
+          </div>
+
+          <!-- Drop Zone -->
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="screenshotInput" accept="image/*" style="display:none" />
+
+            <div class="drop-idle" id="dropIdle">
+              <div class="drop-icon">
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                  <rect x="2" y="2" width="40" height="40" rx="12" fill="rgba(255,65,108,0.06)" stroke="rgba(255,65,108,0.2)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                  <path d="M22 13v12M17 18l5-5 5 5" stroke="#FF416C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 31h4l2-2h8l2 2h4" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="drop-text">Drag & drop your screenshot here</div>
+              <div class="drop-or">or</div>
+              <button type="button" class="browse-btn" id="browseBtn">Browse File</button>
+              <div class="drop-hint">PNG, JPG, JPEG — max 10MB</div>
+            </div>
+
+            <div class="drop-preview" id="dropPreview">
+              <img id="previewImg" src="" alt="Payment Screenshot" />
+              <div class="preview-info">
+                <div class="preview-filename" id="previewName">screenshot.png</div>
+                <div class="preview-size" id="previewSize">0 KB</div>
+              </div>
+              <button type="button" class="remove-btn" id="removeBtn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <div class="upload-actions">
+            <button type="button" class="back-step-btn" id="backToPayBtn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L5 7l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Back
+            </button>
+            <button type="button" class="confirm-upload-btn" id="confirmUploadBtn" disabled>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Confirm &amp; Submit Order
+            </button>
+          </div>
+
+          <p class="upload-note">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#64748B" stroke-width="1.1"/><path d="M6.5 5.5v4M6.5 4v.5" stroke="#64748B" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Your screenshot is kept private and only shared with our team for order verification.
+          </p>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="pay-footer">
+        <div class="pay-footer-trust">
+          <div class="trust-item">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1l4.5 2.25v3.25C11 9.3 9 11.5 6.5 12 4 11.5 2 9.3 2 6.5V3.25L6.5 1z" stroke="#10B981" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            256-bit SSL Encrypted
+          </div>
+          <div class="trust-item">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#10B981" stroke-width="1.1"/><path d="M4 6.5l1.5 1.5L9 4" stroke="#10B981" stroke-width="1.1" stroke-linecap="round"/></svg>
+            RBI Compliant
+          </div>
+          <div class="trust-item">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5L8 5h3.5l-2.8 2 1 3.5L6.5 8.5 4.3 10.5l1-3.5L2.5 5H6L6.5 1.5z" stroke="#10B981" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            Instant Processing
+          </div>
+        </div>
+        <div class="upi-logos">
+          <span class="upi-logo-pill">UPI</span>
+          <span class="upi-logo-pill">NPCI</span>
+          <span class="upi-logo-pill">RBI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Customer Receipt Overlay -->
+  <div class="success-modal-overlay" id="successOverlay">
+    <div class="receipt-card" id="receiptCard">
+
+      <!-- Header -->
+      <div class="rc-header">
+        <div class="rc-check">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 16l5 5 11-10" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="rc-title">Order Confirmed!</div>
+          <div class="rc-sub">Your order has been received and is being processed.</div>
+        </div>
+      </div>
+
+      <!-- Ref -->
+      <div class="rc-ref-bar">
+        <span>Order Reference</span>
+        <strong id="orderRef">—</strong>
+      </div>
+
+      <!-- Details grid -->
+      <div class="rc-grid">
+
+        <div class="rc-block">
+          <div class="rc-block-title">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 3h9M2 6.5h9M2 10h5" stroke="#FF416C" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Plan Purchased
+          </div>
+          <div class="rc-row"><span class="rk">Plan</span><span class="rv" id="rc-plan">—</span></div>
+          <div class="rc-row"><span class="rk">Platform</span><span class="rv" id="rc-platform">—</span></div>
+          <div class="rc-row"><span class="rk">Service</span><span class="rv" id="rc-service">—</span></div>
+          <div class="rc-row"><span class="rk">Start</span><span class="rv" id="rc-start">—</span></div>
+          <div class="rc-row"><span class="rk">Delivery</span><span class="rv rv-green" id="rc-delivery">—</span></div>
+        </div>
+
+        <div class="rc-block">
+          <div class="rc-block-title">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2.5" width="11" height="8" rx="1.5" stroke="#FF416C" stroke-width="1.3"/><path d="M1 5.5h11" stroke="#FF416C" stroke-width="1.3"/></svg>
+            Payment Details
+          </div>
+          <div class="rc-row"><span class="rk">Amount</span><span class="rv rv-bold" id="rc-amount">—</span></div>
+          <div class="rc-row"><span class="rk">UPI ID</span><span class="rv" id="rc-upi">—</span></div>
+          <div class="rc-row"><span class="rk">Status</span><span class="rv rv-green">✅ Paid</span></div>
+          <div class="rc-row"><span class="rk">Profile</span><span class="rv rv-link" id="rc-link">—</span></div>
+          <div class="rc-row" id="rc-mob-row" style="display:none;"><span class="rk">Mobile</span><span class="rv" id="rc-mobile">—</span></div>
+        </div>
+
+      </div>
+
+      <!-- Screenshot badge -->
+      <div class="rc-ss-badge" id="rc-ss-badge" style="display:none;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="9" rx="1.5" stroke="#10B981" stroke-width="1.2"/><path d="M1 5.5h12" stroke="#10B981" stroke-width="1.2"/></svg>
+        Payment screenshot submitted
+      </div>
+
+      <!-- Owner notified -->
+      <div class="rc-owner-notice">
+        <div class="rc-notice-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div>
+          <div class="rc-notice-title">Order sent to Robin YT Expert</div>
+          <div class="rc-notice-sub">All details + screenshot have been forwarded to +91 78302 03286</div>
+        </div>
+        <div class="rc-notice-dot" id="rc-notice-dot"></div>
+      </div>
+
+      <a href="index.html" class="rc-back-btn">← Back to Home</a>
+
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    /* ── PLAN DATA (reads from localStorage, falls back to defaults) ── */
+    const DEFAULT_PLANS_LIST = [
+      { id:'yt-test',       platform:'YouTube',   icon:'yt', title:'TEST',                 badge:'',             price:'1',    service:'Test Plan',                                        detail:'Test order only',                                 start:'5 Minutes',  complete:'Instant',    features:['test','test'],                                                                             crossFeatures:[], active:true },
+      { id:'yt-starter',    platform:'YouTube',   icon:'yt', title:'YouTube Starter',      badge:'',             price:'299',  service:'500 Subs + 1,000 Watch Hours + 5K Views',          detail:'100% Real, Non-Drop, Lifetime Support',           start:'5 Minutes',  complete:'24 Hours',   features:['500 Subscribers','1,000 Watch Hours','5,000 Video Views','Lifetime Guarantee'],            crossFeatures:['Priority Support','Monetization Bundle'], active:true },
+      { id:'yt-growth',     platform:'YouTube',   icon:'yt', title:'YouTube Growth',       badge:'Most Popular', price:'799',  service:'1,000 Subs + 4,000 Watch Hours + 10K Views',       detail:'100% Real, Non-Drop, Priority Support',           start:'5 Minutes',  complete:'48 Hours',   features:['1,000 Subscribers','4,000 Watch Hours','10,000 Video Views','Lifetime Guarantee','Priority Support'], crossFeatures:['Monetization Bundle'], active:true },
+      { id:'yt-pro',        platform:'YouTube',   icon:'yt', title:'YouTube Pro Bundle',   badge:'Best Value',   price:'1499', service:'2,000+ Subs + 4,000+ Watch Hours + 25K Views',     detail:'Full Monetization Bundle, Priority Support',      start:'10 Minutes', complete:'72 Hours',   features:['2,000+ Subscribers','4,000+ Watch Hours','25,000+ Video Views','Lifetime Guarantee','Priority Support','Full Monetization Bundle'], crossFeatures:[], active:true },
+      { id:'ig-basic',      platform:'Instagram', icon:'ig', title:'Instagram Basic',      badge:'',             price:'199',  service:'1,000 Indian Followers + 500 Post Likes',          detail:'100% Indian, Non-Drop Quality, Lifetime Support', start:'5 Minutes',  complete:'20 Minutes', features:['1,000 Followers','500 Post Likes','Lifetime Guarantee'],                                  crossFeatures:['Priority Support','Reel Boost'], active:true },
+      { id:'ig-influencer', platform:'Instagram', icon:'ig', title:'Instagram Influencer', badge:'Most Popular', price:'599',  service:'5,000 Followers + 2,000 Likes + Reel Boost',       detail:'100% Real, Non-Drop, Priority Support',           start:'5 Minutes',  complete:'2 Hours',    features:['5,000 Followers','2,000 Post Likes','Reel Boost','Lifetime Guarantee','Priority Support'],crossFeatures:['Comments Package'], active:true },
+      { id:'ig-brand',      platform:'Instagram', icon:'ig', title:'Instagram Brand',      badge:'Best Value',   price:'1199', service:'10,000 Followers + 5K Likes + Full Reel Boost',    detail:'100% Real, Complete Engagement Package',          start:'10 Minutes', complete:'6 Hours',    features:['10,000 Followers','5,000 Post Likes','Full Reel Boost','Comments Package','Priority Support','Lifetime Guarantee'], crossFeatures:[], active:true },
+      { id:'fb-starter',    platform:'Facebook',  icon:'fb', title:'Facebook Starter',     badge:'',             price:'249',  service:'500 Page Followers + 10K Watch Minutes',           detail:'100% Real, Non-Drop, Lifetime Support',           start:'5 Minutes',  complete:'30 Minutes', features:['500 Page Followers','10,000 Watch Minutes','Lifetime Guarantee'],                         crossFeatures:['Priority Support','Post Bundle'], active:true },
+      { id:'fb-pro',        platform:'Facebook',  icon:'fb', title:'Facebook Page Pro',    badge:'Most Popular', price:'699',  service:'2,000 Followers + 60K Watch Minutes + Post Bundle', detail:'100% Real, Full Engagement, Priority Support',   start:'5 Minutes',  complete:'3 Hours',    features:['2,000 Page Followers','60,000 Watch Minutes','Post Bundle','Priority Support','Lifetime Guarantee'], crossFeatures:['Full Monetization'], active:true },
+      { id:'fb-enterprise', platform:'Facebook',  icon:'fb', title:'Facebook Enterprise',  badge:'Best Value',   price:'1799', service:'5,000 Followers + 100K Watch Minutes + Engagement', detail:'Complete Monetization Package',                  start:'10 Minutes', complete:'12 Hours',   features:['5,000 Page Followers','100,000 Watch Minutes','Full Engagement Package','Priority Support','Complete Monetization','Lifetime Guarantee'], crossFeatures:[], active:true },
+    ];
+
+    function loadPlansFromStorage() {
+      /* reads from same key the admin panel writes to */
+      try {
+        const raw = localStorage.getItem('ytm_plans_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (_) {}
+      return DEFAULT_PLANS_LIST;
+    }
+
+    // Build PLANS map from storage
+    const plansList = loadPlansFromStorage();
+    const PLANS = {};
+    plansList.forEach(p => {
+      const icon = p.icon || (p.platform === 'YouTube' ? 'yt' : p.platform === 'Instagram' ? 'ig' : 'fb');
+      PLANS[p.id] = {
+        platform: p.platform,
+        title:    p.title || p.name,
+        service:  p.service,
+        detail:   p.detail || (p.features || []).filter(f => !f.match(/^no\s/i)).slice(0,2).join(', '),
+        start:    p.start,
+        complete: p.complete || p.delivery,
+        price:    String(p.price),
+        icon,
+      };
+    });
+
+    const ICONS = {
+      yt: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M22.9 7.8s-.3-1.8-1.1-2.5c-1-.9-2.1-1-2.7-1.1C16.7 4 13 4 13 4s-3.7 0-6.1.2c-.5.1-1.7.1-2.7 1.1-.8.7-1.1 2.5-1.1 2.5S3 9.8 3 11.8v1.4c0 2 .2 4 .2 4s.3 1.8 1.1 2.5c1 .9 2.3 1 3 1C9.5 21 13 21 13 21s3.7 0 6.1-.2c.5-.1 1.7-.1 2.7-1.1.8-.7 1.1-2.5 1.1-2.5s.2-2 .2-4v-1.4c0-2-.2-4-.2-4zM11 15.6v-6.2l5.7 3.1-5.7 3.1z" fill="white"/></svg>`,
+      ig: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="3" y="3" width="20" height="20" rx="6" stroke="white" stroke-width="1.8"/><circle cx="13" cy="13" r="4.5" stroke="white" stroke-width="1.8"/><circle cx="19" cy="7" r="1.5" fill="white"/></svg>`,
+      fb: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M22 13A9 9 0 1 0 13 22v-6.4H10V13h3v-2.1c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2V9h-1.5c-1.5 0-2 .9-2 1.8V13h3.4l-.5 2.6H19V22A9 9 0 0 0 22 13z" fill="white"/></svg>`,
+    };
+
+    const GRADIENTS = {
+      yt: 'linear-gradient(135deg,#FF416C,#FF4B2B)',
+      ig: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',
+      fb: 'linear-gradient(135deg,#1877F2,#4FC3F7)',
+    };
+
+    const LINK_PLACEHOLDERS = { yt:'https://youtube.com/channel/...', ig:'https://instagram.com/yourusername', fb:'https://facebook.com/yourpage' };
+    const LINK_LABELS       = { yt:'Your YouTube Channel / Video URL',  ig:'Your Instagram Profile URL',        fb:'Your Facebook Page URL' };
+
+    /* ── UPI CONFIG ── */
+    const UPI_ID   = '7757033809@jupiteraxis';
+    const UPI_NAME = 'Robin%20YT%20Expert';
+
+    /* ── PLAN INIT ── */
+    const params  = new URLSearchParams(location.search);
+    const planKey = params.get('plan') || 'yt-growth';
+    const plan    = PLANS[planKey] || PLANS['yt-growth'];
+
+    document.getElementById('summaryIcon').innerHTML = ICONS[plan.icon];
+    document.getElementById('summaryIcon').style.background = GRADIENTS[plan.icon];
+    document.getElementById('serviceTitle').textContent    = plan.title;
+    document.getElementById('detServiceName').textContent  = plan.service;
+    document.getElementById('detDetail').textContent       = plan.detail;
+    document.getElementById('detStart').textContent        = plan.start;
+    document.getElementById('detComplete').textContent     = plan.complete;
+    document.getElementById('detPrice').textContent        = parseInt(plan.price).toLocaleString('en-IN');
+
+    document.getElementById('linkLabel').textContent              = LINK_LABELS[plan.icon];
+    document.getElementById('profileLink').placeholder           = LINK_PLACEHOLDERS[plan.icon];
+    document.title = `Checkout — ${plan.title} | YTMonetization`;
+
+    /* ── MODAL SETUP ── */
+    document.getElementById('modalServiceTitle').textContent = plan.service;
+    document.getElementById('modalAmt').textContent          = parseInt(plan.price).toLocaleString('en-IN');
+    document.getElementById('stepAmt').textContent           = '₹' + parseInt(plan.price).toLocaleString('en-IN');
+    document.getElementById('upiIdText').value               = UPI_ID;
+
+    /* Build QR — use static branded QR if available, else generate dynamically */
+    const upiLink   = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.price}&cu=INR&tn=YTMonetization-${plan.title.replace(/ /g,'+')}`;
+    const dynamicQR = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(upiLink)}`;
+    const qrEl      = document.getElementById('qrImg');
+    /* Try static branded QR first; fall back to dynamic if missing */
+    qrEl.onerror = () => { qrEl.onerror = null; qrEl.src = dynamicQR; };
+    qrEl.src = 'qr-payment.png';
+
+    /* ── PAYMENT APP DEEP LINKS ── */
+    function openPayApp(app) {
+      const enc  = encodeURIComponent(UPI_ID);
+      const name = encodeURIComponent(UPI_NAME);
+      const amt  = plan.price;
+      const tn   = encodeURIComponent('YTMonetization ' + plan.title);
+      const base = `pa=${enc}&pn=${name}&am=${amt}&cu=INR&tn=${tn}`;
+
+      const ua        = navigator.userAgent || '';
+      const isAndroid = /Android/i.test(ua);
+      const isIOS     = /iPhone|iPad|iPod/i.test(ua);
+      const isMobile  = isAndroid || isIOS;
+
+      /* Desktop: show hint + highlight QR */
+      if (!isMobile) {
+        showAppToast('📱 Open this page on your phone to pay via app. Use the QR code on desktop.');
+        document.getElementById('qrWrap')?.classList.add('qr-pulse');
+        setTimeout(() => document.getElementById('qrWrap')?.classList.remove('qr-pulse'), 1500);
+        return;
+      }
+
+      /* Build URLs */
+      const upiUniversal = `upi://pay?${base}`;
+
+      const androidIntents = {
+        phonepe  : `intent://pay?${base}#Intent;scheme=phonepe;package=com.phonepe.app;S.browser_fallback_url=https%3A%2F%2Fphonepe.com;end`,
+        gpay     : `intent://upi/pay?${base}#Intent;scheme=tez;package=com.google.android.apps.nbu.paisa.user;S.browser_fallback_url=https%3A%2F%2Fpay.google.com;end`,
+        bhim     : `intent://pay?${base}#Intent;scheme=upi;package=in.org.npci.upiapp;S.browser_fallback_url=https%3A%2F%2Fbhimupi.org.in;end`,
+        paytm    : `intent://pay?${base}#Intent;scheme=paytm;package=net.one97.paytm;S.browser_fallback_url=https%3A%2F%2Fpaytm.com;end`,
+        amazonpay: `intent://pay?${base}#Intent;scheme=amazonpay;package=in.amazon.mShop.android.shopping;S.browser_fallback_url=https%3A%2F%2Fpay.amazon.in;end`,
+        upi      : upiUniversal,
+      };
+
+      const iosSchemes = {
+        phonepe  : `phonepe://pay?${base}`,
+        gpay     : `gpay://upi/pay?${base}`,   /* correct iOS GPay scheme */
+        bhim     : `upi://pay?${base}`,
+        paytm    : `paytmmp://pay?${base}`,
+        amazonpay: `upi://pay?${base}`,         /* Amazon Pay iOS fallback */
+        upi      : upiUniversal,
+      };
+
+      const url = isAndroid
+        ? (androidIntents[app] || upiUniversal)
+        : (iosSchemes[app]    || upiUniversal);
+
+      /* Mark payment as interacted */
+      paymentInteracted = true;
+
+      /* Listen for return from payment app → highlight UTR section + focus input */
+      const onReturn = () => {
+        if (document.visibilityState === 'visible') {
+          document.removeEventListener('visibilitychange', onReturn);
+          setTimeout(() => {
+            verifySection.classList.add('highlight');
+            verifySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            utrInput.focus();
+            showAppToast('✅ Welcome back! Enter your Transaction ID below to confirm.');
+          }, 400);
+        }
+      };
+      document.addEventListener('visibilitychange', onReturn);
+
+      /* iOS Safari requires direct window.location assignment from a user gesture */
+      window.location.href = url;
+
+      /* If app not installed (page stays visible), show toast and remove listener */
+      setTimeout(() => {
+        if (!document.hidden) {
+          document.removeEventListener('visibilitychange', onReturn);
+          showAppToast('App not installed? Try another app or scan the QR code.');
+        }
+      }, 2500);
+    }
+
+    function showAppToast(msg) {
+      const t = document.getElementById('appToast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 4500);
+    }
+
+    /* ── CHAR COUNT ── */
+    document.getElementById('message').addEventListener('input', function() {
+      document.getElementById('charCount').textContent = this.value.length;
+    });
+
+    /* ── MOBILE DIGITS ONLY ── */
+    document.getElementById('mobile').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g,'').slice(0,10);
+    });
+
+    /* ── VALIDATION ── */
+    function validate() {
+      let ok = true;
+      const link   = document.getElementById('profileLink');
+      const mobile = document.getElementById('mobile');
+      if (!link.value.trim() || (!link.value.startsWith('http') && !link.value.includes('.'))) {
+        link.classList.add('error');
+        document.getElementById('linkError').classList.add('show');
+        ok = false;
+      } else {
+        link.classList.remove('error');
+        document.getElementById('linkError').classList.remove('show');
+      }
+      const mob = mobile.value.replace(/\D/g,'');
+      if (mobile.value.trim() && mob.length !== 10) {
+        mobile.classList.add('error');
+        document.getElementById('mobileError').classList.add('show');
+        ok = false;
+      } else {
+        mobile.classList.remove('error');
+        document.getElementById('mobileError').classList.remove('show');
+      }
+      return ok;
+    }
+
+    /* ── FORM SUBMIT → OPEN PAYMENT MODAL ── */
+    document.getElementById('orderForm').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!validate()) return;
+      const btn = document.getElementById('submitBtn');
+      btn.classList.add('loading'); btn.disabled = true;
+      setTimeout(() => {
+        btn.classList.remove('loading'); btn.disabled = false;
+        openPayModal();
+      }, 900);
+    });
+
+    function openPayModal() {
+      document.getElementById('payBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('payClose').addEventListener('click', () => {
+      document.getElementById('payBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    });
+
+    document.getElementById('payBackdrop').addEventListener('click', e => {
+      if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+
+    /* ── UTR INPUT VALIDATION ── */
+    const utrInput   = document.getElementById('utrInput');
+    const verifyBtn  = document.getElementById('verifyBtn');
+    const utrErrMsg  = document.getElementById('utrErrorMsg');
+    const verifySection = document.getElementById('verifySection');
+
+    utrInput.addEventListener('input', () => {
+      const val = utrInput.value.trim();
+      utrInput.classList.remove('error');
+      utrErrMsg.classList.remove('show');
+      if (val.length >= 6) {
+        verifyBtn.classList.add('active');
+      } else {
+        verifyBtn.classList.remove('active');
+      }
+    });
+
+    verifyBtn.addEventListener('click', () => {
+      const val = utrInput.value.trim();
+      if (val.length < 6) {
+        utrInput.classList.add('error');
+        utrErrMsg.classList.add('show');
+        utrInput.focus();
+        return;
+      }
+      /* Store UTR and proceed to screenshot upload */
+      window._utrId = val;
+      document.getElementById('payBody').style.display = 'none';
+      verifySection.style.display = 'none';
+      document.getElementById('uploadStep').classList.add('active');
+    });
+
+    /* ── COPY UPI (works on iOS HTTP + Android) ── */
+    function copyText(text) {
+      /* Modern API — needs HTTPS or localhost */
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      /* iOS / HTTP fallback via execCommand */
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;font-size:16px';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select(); ta.setSelectionRange(0, 99999);
+      try { document.execCommand('copy'); } catch(_) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    document.getElementById('copyUpiBtn').addEventListener('click', () => {
+      const btn = document.getElementById('copyUpiBtn');
+      /* On iOS HTTP, select the input and execCommand — most reliable approach */
+      const inp = document.getElementById('upiIdText');
+      inp.select(); inp.setSelectionRange(0, 99999);
+      copyText(UPI_ID).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Copied!`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 8.5V2.5a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Copy`;
+        }, 2000);
+      });
+    });
+
+    /* ── BACK TO PAYMENT ── (kept for back button in upload step) */
+
+    /* ── BACK TO PAYMENT ── */
+    document.getElementById('backToPayBtn').addEventListener('click', () => {
+      document.getElementById('uploadStep').classList.remove('active');
+      document.getElementById('payBody').style.display = '';
+      verifySection.style.display = '';
+    });
+
+    /* ── FILE UPLOAD LOGIC ── */
+    let uploadedFile = null;
+
+    const dropZone     = document.getElementById('dropZone');
+    const fileInput    = document.getElementById('screenshotInput');
+    const dropIdle     = document.getElementById('dropIdle');
+    const dropPreview  = document.getElementById('dropPreview');
+    const previewImg   = document.getElementById('previewImg');
+    const confirmBtn   = document.getElementById('confirmUploadBtn');
+
+    document.getElementById('browseBtn').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault(); dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) handleFile(f);
+    });
+
+    document.getElementById('removeBtn').addEventListener('click', () => {
+      uploadedFile = null;
+      fileInput.value = '';
+      previewImg.src = '';
+      dropIdle.classList.remove('hidden');
+      dropPreview.classList.remove('show');
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = '0.45';
+      confirmBtn.style.pointerEvents = 'none';
+    });
+
+    function handleFile(file) {
+      uploadedFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        dropIdle.classList.add('hidden');
+        dropPreview.classList.add('show');
+        document.getElementById('previewName').textContent = file.name;
+        document.getElementById('previewSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+        confirmBtn.style.pointerEvents = 'all';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ── CONFIRM UPLOAD → SUCCESS ── */
+    document.getElementById('confirmUploadBtn').addEventListener('click', async () => {
+      const link    = document.getElementById('profileLink').value.trim();
+      const mobile  = document.getElementById('mobile').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const ref     = 'YTM' + Date.now().toString(36).toUpperCase().slice(-6);
+      const ssData  = uploadedFile ? previewImg.src : ''; // base64 screenshot
+
+      // 1️⃣ Save order to localStorage (with screenshot base64 for admin view)
+      const orderRecord = {
+        id:             ref,
+        date:           new Date().toISOString(),
+        plan:           plan.title,
+        platform:       plan.platform,
+        planId:         planKey,
+        service:        plan.service,
+        price:          parseInt(plan.price),
+        upiId:          UPI_ID,
+        utrId:          window._utrId || '',   // ← UTR transaction ID from user
+        profileLink:    link,
+        mobile:         mobile ? '+91' + mobile : '',
+        message:        message,
+        start:          plan.start,
+        delivery:       plan.complete,
+        hasScreenshot:  !!uploadedFile,
+        screenshotName: uploadedFile ? `payment-${ref}.${(uploadedFile.name.split('.').pop()||'png')}` : '',
+        screenshotData: ssData,   // ← base64 image shown in admin
+        status:         'pending',
+      };
+      try {
+        const existing = JSON.parse(localStorage.getItem('ytm_orders') || '[]');
+        existing.unshift(orderRecord);
+        localStorage.setItem('ytm_orders', JSON.stringify(existing));
+        if (typeof BroadcastChannel !== 'undefined') {
+          new BroadcastChannel('ytm_orders_sync').postMessage({ type:'new_order', order:orderRecord });
+        }
+      } catch(e) {}
+
+      // Also POST to server API so cross-device (iPhone → PC admin) works
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderRecord)
+      }).catch(() => {}); // silent fail — localStorage is fallback
+
+      // 2️⃣ Fill customer receipt overlay
+      document.getElementById('orderRef').textContent     = ref;
+      document.getElementById('rc-plan').textContent      = plan.title;
+      document.getElementById('rc-platform').textContent  = plan.platform;
+      document.getElementById('rc-service').textContent   = plan.service;
+      document.getElementById('rc-start').textContent     = plan.start;
+      document.getElementById('rc-delivery').textContent  = plan.complete;
+      document.getElementById('rc-amount').textContent    = '₹' + parseInt(plan.price).toLocaleString('en-IN');
+      document.getElementById('rc-upi').textContent       = UPI_ID;
+      document.getElementById('rc-link').textContent      = link;
+      if (mobile) {
+        document.getElementById('rc-mobile').textContent  = '+91' + mobile;
+        document.getElementById('rc-mob-row').style.display = 'flex';
+      }
+      if (uploadedFile) document.getElementById('rc-ss-badge').style.display = 'flex';
+
+      // 3️⃣ Show receipt overlay
+      document.getElementById('uploadStep').classList.remove('active');
+      document.getElementById('payBody').style.display = '';
+      document.getElementById('payBackdrop').classList.remove('open');
+      document.getElementById('successOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      // 4️⃣ Download receipt as PDF
+      setTimeout(() => {
+        const receiptHTML = buildReceiptHTML(orderRecord, plan);
+        const container = document.createElement('div');
+        container.innerHTML = receiptHTML;
+        const receiptCard = container.querySelector('.card') || container;
+        document.body.appendChild(container);
+        container.style.position = 'fixed';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        container.style.width = '540px';
+        const opt = {
+          margin:       [10, 10, 10, 10],
+          filename:     `YTM-Receipt-${ref}.pdf`,
+          image:        { type: 'jpeg', quality: 0.97 },
+          html2canvas:  { scale: 2, useCORS: true, logging: false },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak:    { mode: 'avoid-all' }
+        };
+        html2pdf().set(opt).from(receiptCard).save().then(() => {
+          document.body.removeChild(container);
+        });
+      }, 800);
+
+      // 5️⃣ Redirect to home after 5 seconds
+      setTimeout(() => { window.location.href = 'index.html'; }, 5000);
+    });
+
+    /* ── BUILD RECEIPT HTML ── */
+    function buildReceiptHTML(o, p) {
+      const date = new Date(o.date).toLocaleString('en-IN',{
+        day:'2-digit', month:'long', year:'numeric',
+        hour:'2-digit', minute:'2-digit', hour12:true
+      });
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Order Receipt — #${o.id}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;padding:2rem 1rem;min-height:100vh}
+  .card{max-width:520px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.1)}
+  .header{background:linear-gradient(135deg,#FF416C,#FF4B2B);padding:2rem;text-align:center;color:#fff}
+  .check{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem}
+  .header h1{font-size:1.5rem;font-weight:800;margin-bottom:.25rem}
+  .header p{font-size:.875rem;opacity:.85}
+  .ref-bar{background:#fff7ed;border-bottom:1px solid #fed7aa;padding:.75rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+  .ref-bar span{font-size:.75rem;font-weight:600;color:#9a3412;text-transform:uppercase;letter-spacing:.06em}
+  .ref-bar strong{font-family:monospace;font-size:1rem;color:#c2410c;letter-spacing:.04em}
+  .body{padding:1.5rem}
+  .section{margin-bottom:1.25rem}
+  .section-title{font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid #f1f5f9}
+  .row{display:flex;justify-content:space-between;align-items:flex-start;padding:.4rem 0;font-size:.875rem;gap.5rem}
+  .row+.row{border-top:1px solid #f8fafc}
+  .row-key{color:#64748b;font-weight:500;flex-shrink:0}
+  .row-val{color:#1e293b;font-weight:600;text-align:right;word-break:break-all}
+  .row-val.green{color:#059669}
+  .row-val.big{font-size:1.1rem;color:#FF416C;font-weight:800}
+  .ss-img{width:100%;border-radius:10px;border:1px solid #e2e8f0;margin-top:.5rem;max-height:300px;object-fit:contain;background:#f8fafc}
+  .footer{background:#f8fafc;border-top:1px solid #e2e8f0;padding:1rem 1.5rem;text-align:center;font-size:.75rem;color:#94a3b8}
+  .footer strong{color:#FF416C}
+  @media print{body{background:#fff;padding:0}.card{box-shadow:none;border-radius:0;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="check">✅</div>
+    <h1>Order Confirmed!</h1>
+    <p>Your payment has been received and order is being processed.</p>
+  </div>
+  <div class="ref-bar">
+    <span>Order Reference</span>
+    <strong>#${o.id}</strong>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="section-title">📦 Plan Details</div>
+      <div class="row"><span class="row-key">Plan</span><span class="row-val">${o.plan}</span></div>
+      <div class="row"><span class="row-key">Platform</span><span class="row-val">${o.platform}</span></div>
+      <div class="row"><span class="row-key">Service</span><span class="row-val">${o.service}</span></div>
+      <div class="row"><span class="row-key">Start Time</span><span class="row-val green">${o.start}</span></div>
+      <div class="row"><span class="row-key">Delivery</span><span class="row-val green">${o.delivery}</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">💳 Payment Details</div>
+      <div class="row"><span class="row-key">Amount Paid</span><span class="row-val big">₹${parseInt(o.price).toLocaleString('en-IN')}</span></div>
+      <div class="row"><span class="row-key">UPI ID</span><span class="row-val">${o.upiId}</span></div>
+      <div class="row"><span class="row-key">Date & Time</span><span class="row-val">${date}</span></div>
+      <div class="row"><span class="row-key">Status</span><span class="row-val green">✅ Paid</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">👤 Your Details</div>
+      <div class="row"><span class="row-key">Profile</span><span class="row-val">${o.profileLink}</span></div>
+      ${o.mobile ? `<div class="row"><span class="row-key">Mobile</span><span class="row-val">${o.mobile}</span></div>` : ''}
+      ${o.message ? `<div class="row"><span class="row-key">Note</span><span class="row-val">${o.message}</span></div>` : ''}
+    </div>
+  </div>
+  <div class="footer">
+    Keep this receipt for your records.<br/>
+    Support: <strong>Robin YT Expert</strong> · +91 78302 03286
+  </div>
+</div>
+</body>
+</html>`;
+    }
+
+    /* expose to global so onclick="openPayApp(...)" works */
+    window.openPayApp   = openPayApp;
+    window.showAppToast = showAppToast;
+
+  })();
+  </script>
+</body>
+</html>

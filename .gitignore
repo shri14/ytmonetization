@@ -1,0 +1,22 @@
+# Claude Code settings
+.claude/
+
+# Environment secrets — never commit these
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (if any)
+node_modules/
+
+# Local data files (server-side only)
+data_orders.json
+data_plans.json
