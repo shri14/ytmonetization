@@ -209,87 +209,121 @@
        FULLY RESPONSIVE — Mobile / Tablet / Desktop
     ══════════════════════════════════════ */
 
-    /* ── Tablet (≤ 900px) ── */
+    /* ── Large desktop (≥ 1200px) ── */
+    @media (min-width: 1200px) {
+      .checkout-wrapper { max-width: 1100px; grid-template-columns: 1fr 1.1fr; }
+      main { padding: 3.5rem 2rem 5rem; }
+    }
+
+    /* ── Laptop / small desktop (≤ 1024px) ── */
+    @media (max-width: 1024px) {
+      .checkout-wrapper { max-width: 860px; gap: 1.5rem; }
+      main { padding: 2.5rem 1.5rem 4rem; }
+    }
+
+    /* ── Tablet landscape (≤ 900px) ── */
     @media (max-width: 900px) {
       .checkout-wrapper { max-width: 700px; gap: 1.25rem; }
       .panel { padding: 1.6rem; }
+      main { padding: 2rem 1.25rem 4rem; }
     }
 
-    /* ── Tablet portrait / large phone (≤ 768px) ── */
+    /* ── Tablet portrait (≤ 768px) ── */
     @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
       .checkout-wrapper {
         grid-template-columns: 1fr;
-        max-width: 560px;
-        gap: 1rem;
+        max-width: 580px;
+        gap: 1.1rem;
       }
-      main { padding: 1.25rem 1rem 5rem; }   /* bottom room for thumb nav */
+      main { padding: 1.5rem 1.25rem 5rem; }
       .price-amount { font-size: 1.9rem; }
-      .panel { border-radius: 20px; padding: 1.4rem; }
-
-      /* On tablet/large phone show summary collapsed by default */
+      .panel { border-radius: 20px; padding: 1.5rem; }
       .summary-panel .badges { gap: 0.4rem; }
       .summary-header h2 { font-size: 1.1rem; }
-
-      /* Stack detail rows nicely */
       .detail-label { font-size: 0.75rem; }
       .detail-value { font-size: 0.85rem; }
-
-      /* Form */
       .form-title { font-size: 1.15rem; }
-      input, textarea { font-size: 1rem; }   /* prevents iOS zoom */
+      input, textarea { font-size: 1rem; }
+    }
+
+    /* ── Large phone / phablet (≤ 640px) ── */
+    @media (max-width: 640px) {
+      .checkout-wrapper { max-width: 100%; gap: 1rem; }
+      main { padding: 1.25rem 1rem 5rem; }
+      .panel { padding: 1.35rem; border-radius: 18px; }
+      .summary-header h2 { font-size: 1.05rem; }
+      .price-amount { font-size: 1.8rem; }
+      .form-title { font-size: 1.1rem; }
     }
 
     /* ── Mobile (≤ 480px) — iPhone / Android ── */
     @media (max-width: 480px) {
       nav { padding: 0 1rem; }
       .nav-inner { height: 58px; }
-      .nav-logo { font-size: 1.05rem; }
+      .nav-logo { font-size: 1.05rem; gap: 8px; }
       .logo-box { width: 30px; height: 30px; border-radius: 8px; }
-      .nav-back span { display: none; }   /* hide text, keep icon */
+      .nav-back span { display: none; }
 
-      main { padding: 1rem 0.75rem 4.5rem; }
+      main { padding: 1rem 0.875rem 4.5rem; }
 
-      .checkout-wrapper { gap: 0.85rem; max-width: 100%; }
+      .checkout-wrapper { gap: 0.85rem; }
+      .panel { border-radius: 16px; padding: 1.15rem; }
 
-      .panel { border-radius: 18px; padding: 1.15rem; }
-
-      /* Summary panel */
+      /* Summary */
       .summary-header { gap: 10px; }
-      .summary-icon { width: 40px; height: 40px; border-radius: 11px; }
+      .summary-icon { width: 42px; height: 42px; border-radius: 12px; }
       .summary-header h2 { font-size: 1rem; }
       .summary-header p { font-size: 0.72rem; }
-      .detail-row { gap: 0.6rem; }
-      .detail-label { font-size: 0.7rem; }
+      .detail-grid { gap: 0.7rem; }
+      .detail-row { gap: 0.5rem; }
+      .detail-label { font-size: 0.68rem; }
       .detail-value { font-size: 0.8rem; }
       .price-amount { font-size: 1.65rem; }
-      .price-highlight { padding: 1rem 1.1rem; }
+      .price-highlight { padding: 0.9rem 1rem; }
+      .badges { gap: 0.4rem; }
       .badge { font-size: 0.7rem; padding: 0.25rem 0.6rem; }
 
-      /* Form panel */
+      /* Form */
+      .form-panel { gap: 1.15rem; }
       .form-title { font-size: 1.05rem; }
       .form-subtitle { font-size: 0.8rem; }
       label { font-size: 0.75rem; }
       input, textarea {
-        font-size: 16px;    /* CRITICAL: prevents iOS auto-zoom */
+        font-size: 16px;
         padding: 0.9rem 1rem 0.9rem 2.6rem;
         border-radius: 11px;
       }
       textarea { min-height: 80px; }
       .submit-btn {
         padding: 1rem;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         border-radius: 13px;
-        min-height: 52px;   /* comfortable tap target */
+        min-height: 52px;
       }
       .secure-note { font-size: 0.72rem; }
     }
 
-    /* ── Very small phones (≤ 360px) — Galaxy A series, etc ── */
-    @media (max-width: 360px) {
-      .panel { padding: 1rem; border-radius: 16px; }
+    /* ── Small phones (≤ 390px) — iPhone mini, Galaxy A ── */
+    @media (max-width: 390px) {
+      main { padding: 0.875rem 0.75rem 4rem; }
+      .panel { padding: 1rem; border-radius: 14px; }
       .price-amount { font-size: 1.5rem; }
+      .price-highlight { padding: 0.85rem 0.9rem; }
       .badges { gap: 0.3rem; }
       .badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
+      .form-title { font-size: 0.98rem; }
+      input, textarea { padding: 0.85rem 0.9rem 0.85rem 2.5rem; }
+      .submit-btn { font-size: 0.9rem; }
+    }
+
+    /* ── Very small (≤ 320px) — SE 1st gen ── */
+    @media (max-width: 320px) {
+      nav { padding: 0 0.75rem; }
+      main { padding: 0.75rem 0.625rem 3.5rem; }
+      .panel { padding: 0.875rem; border-radius: 12px; }
+      .summary-icon { width: 36px; height: 36px; }
+      .price-amount { font-size: 1.35rem; }
     }
 
     /* PANEL ANIMATION */

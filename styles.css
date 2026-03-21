@@ -1323,6 +1323,11 @@ body {
   .trust-container { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding: 0 1rem; }
   .trust-divider { display: none; }
 
+  /* ── Hero Search ── */
+  .hero-search-wrap { max-width: 100%; }
+  .hero-search-input { font-size: 16px; } /* prevent iOS auto-zoom */
+  .hero-search-dropdown { max-height: 300px; border-radius: 14px; }
+
   /* ── Sections ── */
   .section-container { padding: 0 1.25rem; }
   .section-header { margin-bottom: 2.5rem; }
@@ -1408,6 +1413,11 @@ body {
 
   /* ── Footer ── */
   .footer-links { grid-template-columns: repeat(2, 1fr); }
+
+  /* ── Hero search ── */
+  .hero-search-wrap { max-width: 100%; }
+  .hero-search-box { border-radius: 12px; }
+  .hero-search-input { font-size: 16px; padding: 0.75rem 0; }
 }
 
 /* ── 480px: Standard phone ────────────────────────────── */
@@ -1488,6 +1498,16 @@ body {
   /* ── WhatsApp ── */
   .whatsapp-float { bottom: 1rem; right: 1rem; width: 48px; height: 48px; }
   .whatsapp-tooltip { display: none; }
+
+  /* ── Hero search ── */
+  .hero-search-box { padding: 0 0.85rem; border-radius: 11px; }
+  .hero-search-input { font-size: 16px; padding: 0.7rem 0; }
+  .hero-search-dropdown { max-height: 260px; border-radius: 12px; left: -0.125rem; right: -0.125rem; }
+  .hsd-item { padding: 0.65rem 0.85rem; gap: 10px; }
+  .hsd-ico { width: 30px; height: 30px; border-radius: 8px; }
+  .hsd-name { font-size: 0.82rem; }
+  .hsd-meta { font-size: 0.68rem; }
+  .hsd-price { font-size: 0.82rem; }
 }
 
 /* ── 375px: Small phone ───────────────────────────────── */
@@ -1504,6 +1524,11 @@ body {
   .price-card { padding: 1.5rem; }
   .service-card-inner { padding: 1.25rem; }
   .btn-hero-primary, .btn-hero-secondary { padding: 0.85rem 1.5rem; font-size: 0.9rem; }
+
+  /* ── Hero search ── */
+  .hero-search-box { padding: 0 0.75rem; }
+  .hero-search-input { font-size: 15px; }
+  .hero-search-dropdown { max-height: 240px; }
 }
 
 /* ═══════════════ MOBILE PRICING CAROUSEL (iPhone + Android) ═══════════════ */
