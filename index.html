@@ -958,20 +958,30 @@
       });
     });
 
-    /* Render on load */
-    renderPricingSection();
+    /* ── SERVER SYNC: fetch latest plans from JSONBin, update localStorage, then render ── */
+    async function syncAndRender() {
+      try {
+        const res = await fetch('/api/plans');
+        if (res.ok) {
+          const serverPlans = await res.json();
+          if (Array.isArray(serverPlans) && serverPlans.length > 0) {
+            localStorage.setItem(LS_KEY, JSON.stringify(serverPlans));
+          }
+        }
+      } catch (e) { /* offline / local dev — use localStorage fallback */ }
+      renderPricingSection();
+    }
 
-    /* ── REAL-TIME SYNC (no reload needed) ── */
+    /* Render on load (sync from server first) */
+    syncAndRender();
 
-    /* 1. BroadcastChannel — instant signal from admin panel (same browser, any tab) */
+    /* ── REAL-TIME SYNC (same browser, admin → main site) ── */
     if (typeof BroadcastChannel !== 'undefined') {
       const bc = new BroadcastChannel('ytm_plans_sync');
       bc.onmessage = e => {
         if (e.data?.type === 'plans_updated') renderPricingSection();
       };
     }
-
-    /* 2. storage event — fallback for older browsers / cross-tab */
     window.addEventListener('storage', e => {
       if (e.key === LS_KEY) renderPricingSection();
     });

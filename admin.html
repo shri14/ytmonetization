@@ -714,6 +714,12 @@
     localStorage.setItem(DATA_KEY, JSON.stringify(plans));
     /* Notify all other open tabs instantly */
     bc?.postMessage({ type:'plans_updated' });
+    /* Sync to server so all devices (mobile, desktop) see the update */
+    fetch('/api/plans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(plans),
+    }).catch(() => {}); /* silent fail — localStorage is still the truth locally */
   }
   function uid(){ return Math.random().toString(36).slice(2,9); }
 

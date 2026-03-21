@@ -1521,7 +1521,7 @@
   </div>
 
   <script>
-  (() => {
+  (async () => {
     /* ── PLAN DATA (reads from localStorage, falls back to defaults) ── */
     const DEFAULT_PLANS_LIST = [
       { id:'yt-test',       platform:'YouTube',   icon:'yt', title:'TEST',                 badge:'',             price:'1',    service:'Test Plan',                                        detail:'Test order only',                                 start:'5 Minutes',  complete:'Instant',    features:['test','test'],                                                                             crossFeatures:[], active:true },
@@ -1537,7 +1537,6 @@
     ];
 
     function loadPlansFromStorage() {
-      /* reads from same key the admin panel writes to */
       try {
         const raw = localStorage.getItem('ytm_plans_v1');
         if (raw) {
@@ -1548,22 +1547,37 @@
       return DEFAULT_PLANS_LIST;
     }
 
-    // Build PLANS map from storage
+    function buildPlansMap(plansList) {
+      const PLANS = {};
+      plansList.forEach(p => {
+        const icon = p.icon || (p.platform === 'YouTube' ? 'yt' : p.platform === 'Instagram' ? 'ig' : 'fb');
+        PLANS[p.id] = {
+          platform: p.platform,
+          title:    p.title || p.name,
+          service:  p.service,
+          detail:   p.detail || (p.features || []).filter(f => !f.match(/^no\s/i)).slice(0,2).join(', '),
+          start:    p.start,
+          complete: p.complete || p.delivery,
+          price:    String(p.price),
+          icon,
+        };
+      });
+      return PLANS;
+    }
+
+    /* Sync plans from server → localStorage, then init page */
+    try {
+      const res = await fetch('/api/plans');
+      if (res.ok) {
+        const serverPlans = await res.json();
+        if (Array.isArray(serverPlans) && serverPlans.length > 0) {
+          localStorage.setItem('ytm_plans_v1', JSON.stringify(serverPlans));
+        }
+      }
+    } catch (_) { /* offline / local — use localStorage */ }
+
     const plansList = loadPlansFromStorage();
-    const PLANS = {};
-    plansList.forEach(p => {
-      const icon = p.icon || (p.platform === 'YouTube' ? 'yt' : p.platform === 'Instagram' ? 'ig' : 'fb');
-      PLANS[p.id] = {
-        platform: p.platform,
-        title:    p.title || p.name,
-        service:  p.service,
-        detail:   p.detail || (p.features || []).filter(f => !f.match(/^no\s/i)).slice(0,2).join(', '),
-        start:    p.start,
-        complete: p.complete || p.delivery,
-        price:    String(p.price),
-        icon,
-      };
-    });
+    const PLANS = buildPlansMap(plansList);
 
     const ICONS = {
       yt: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M22.9 7.8s-.3-1.8-1.1-2.5c-1-.9-2.1-1-2.7-1.1C16.7 4 13 4 13 4s-3.7 0-6.1.2c-.5.1-1.7.1-2.7 1.1-.8.7-1.1 2.5-1.1 2.5S3 9.8 3 11.8v1.4c0 2 .2 4 .2 4s.3 1.8 1.1 2.5c1 .9 2.3 1 3 1C9.5 21 13 21 13 21s3.7 0 6.1-.2c.5-.1 1.7-.1 2.7-1.1.8-.7 1.1-2.5 1.1-2.5s.2-2 .2-4v-1.4c0-2-.2-4-.2-4zM11 15.6v-6.2l5.7 3.1-5.7 3.1z" fill="white"/></svg>`,
