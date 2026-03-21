@@ -148,28 +148,9 @@ if (heroStats) {
   statsObserver.observe(heroStats);
 }
 
-// ─── PRICING TABS ────────────────────────────────────────
-const tabs     = document.querySelectorAll('.pricing-tab');
-const allGrids = document.querySelectorAll('.pricing-grid');
-
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const platform = tab.dataset.platform;
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    allGrids.forEach(grid => {
-      const show = grid.id === `${platform}-plans`;
-      grid.classList.toggle('hidden', !show);
-      if (show) {
-        // re-trigger AOS for newly visible cards
-        grid.querySelectorAll('[data-aos]').forEach(el => {
-          el.classList.remove('aos-animate');
-          setTimeout(() => el.classList.add('aos-animate'), 50);
-        });
-      }
-    });
-  });
-});
+// ─── PRICING TABS (handled in index.html inline script) ────────────────────
+// Tab switching is managed by the dynamic pricing script to stay in sync with
+// carousel wrappers. No duplicate listener needed here.
 
 // ─── FAQ ACCORDION ───────────────────────────────────────
 document.querySelectorAll('.faq-question').forEach(btn => {

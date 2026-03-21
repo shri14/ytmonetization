@@ -394,9 +394,30 @@
       </div>
 
       <!-- Dynamic Plans — rendered by JS -->
-      <div class="pricing-grid" id="youtube-plans"></div>
-      <div class="pricing-grid hidden" id="instagram-plans"></div>
-      <div class="pricing-grid hidden" id="facebook-plans"></div>
+      <div class="carousel-wrap" id="youtube-wrap">
+        <div class="pricing-grid" id="youtube-plans"></div>
+        <div class="carousel-hint" id="youtube-hint">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Swipe to see more plans
+        </div>
+        <div class="carousel-dots" id="youtube-dots"></div>
+      </div>
+      <div class="carousel-wrap hidden" id="instagram-wrap">
+        <div class="pricing-grid" id="instagram-plans"></div>
+        <div class="carousel-hint" id="instagram-hint">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Swipe to see more plans
+        </div>
+        <div class="carousel-dots" id="instagram-dots"></div>
+      </div>
+      <div class="carousel-wrap hidden" id="facebook-wrap">
+        <div class="pricing-grid" id="facebook-plans"></div>
+        <div class="carousel-hint" id="facebook-hint">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Swipe to see more plans
+        </div>
+        <div class="carousel-dots" id="facebook-dots"></div>
+      </div>
 
       <div class="pricing-note">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 4v4m0 4h.01" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -837,24 +858,90 @@
       </div>`;
     }
 
+    /* ── CAROUSEL (mobile only) ── */
+    function initCarousel(gridId, dotsId, hintId) {
+      const grid = document.getElementById(gridId);
+      const dotsEl = document.getElementById(dotsId);
+      const hintEl = document.getElementById(hintId);
+      if (!grid || !dotsEl) return;
+
+      const isMobile = () => window.innerWidth <= 768;
+      const cards = grid.querySelectorAll('.price-card');
+      if (!cards.length) return;
+
+      // Build dots
+      dotsEl.innerHTML = '';
+      cards.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Plan ${i + 1}`);
+        dot.addEventListener('click', () => {
+          cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+        dotsEl.appendChild(dot);
+      });
+
+      // Track active dot on scroll
+      const dots = dotsEl.querySelectorAll('.carousel-dot');
+      let scrollTimer;
+      grid.addEventListener('scroll', () => {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          const center = grid.scrollLeft + grid.clientWidth / 2;
+          let closest = 0, minDist = Infinity;
+          cards.forEach((card, i) => {
+            const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+            const dist = Math.abs(center - cardCenter);
+            if (dist < minDist) { minDist = dist; closest = i; }
+          });
+          dots.forEach((d, i) => d.classList.toggle('active', i === closest));
+          // hide hint after first swipe
+          if (hintEl && grid.scrollLeft > 10) hintEl.style.display = 'none';
+        }, 50);
+      });
+
+      // Show/hide hint and dots based on screen size
+      const updateVisibility = () => {
+        const mobile = isMobile();
+        dotsEl.style.display = mobile ? 'flex' : 'none';
+        if (hintEl) hintEl.style.display = mobile && cards.length > 1 ? 'flex' : 'none';
+      };
+      updateVisibility();
+      window.addEventListener('resize', updateVisibility);
+    }
+
     function renderPricingSection() {
       const plans = getPlans();
 
       [
-        { id:'youtube-plans',   name:'YouTube'   },
-        { id:'instagram-plans', name:'Instagram' },
-        { id:'facebook-plans',  name:'Facebook'  },
-      ].forEach(({ id, name }) => {
+        { id:'youtube-plans',   wrap:'youtube-wrap',   dots:'youtube-dots',   hint:'youtube-hint',   name:'YouTube'   },
+        { id:'instagram-plans', wrap:'instagram-wrap', dots:'instagram-dots', hint:'instagram-hint', name:'Instagram' },
+        { id:'facebook-plans',  wrap:'facebook-wrap',  dots:'facebook-dots',  hint:'facebook-hint',  name:'Facebook'  },
+      ].forEach(({ id, wrap, dots, hint, name }) => {
         const el = document.getElementById(id);
         if (!el) return;
         const group = plans.filter(p => p.platform === name);
         if (!group.length) {
-          el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#64748B;">No plans available for this platform.</div>';
+          el.innerHTML = '<div style="text-align:center;padding:3rem;color:#64748B;width:100%;">No plans available for this platform.</div>';
           return;
         }
         el.innerHTML = group.map((plan, i) => renderCard(plan, i * 100)).join('');
+        initCarousel(id, dots, hint);
       });
     }
+
+    /* Tab switching — also toggle carousel-wrap */
+    document.querySelectorAll('.pricing-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pricing-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const plat = btn.dataset.platform;
+        ['youtube','instagram','facebook'].forEach(p => {
+          const wrap = document.getElementById(p + '-wrap');
+          if (wrap) wrap.classList.toggle('hidden', p !== plat);
+        });
+      });
+    });
 
     /* Render on load */
     renderPricingSection();

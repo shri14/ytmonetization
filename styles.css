@@ -1233,3 +1233,82 @@ body {
   .cta-actions { flex-direction: column; width: 100%; }
   .btn-cta-whatsapp, .btn-cta-secondary { justify-content: center; }
 }
+
+/* ═══════════════ MOBILE PRICING CAROUSEL ═══════════════ */
+@media (max-width: 768px) {
+  .pricing-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    padding: 0.5rem 1.25rem 1.5rem;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    /* negative margin to allow edge peek */
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+  .pricing-grid::-webkit-scrollbar { display: none; }
+
+  .pricing-grid .price-card {
+    min-width: 82vw;
+    max-width: 82vw;
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    transform: none !important;
+  }
+  .pricing-grid .price-card-featured {
+    transform: none !important;
+    border-color: rgba(255,65,108,0.45);
+    box-shadow: 0 0 30px rgba(255,65,108,0.15);
+  }
+
+  /* swipe hint arrow */
+  .carousel-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    letter-spacing: 0.03em;
+    animation: hintPulse 2s ease-in-out infinite;
+  }
+  .carousel-hint svg { flex-shrink: 0; }
+  @keyframes hintPulse {
+    0%,100% { opacity: 0.5; transform: translateX(0); }
+    50%      { opacity: 1;   transform: translateX(4px); }
+  }
+
+  /* dot indicators */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 1.25rem;
+  }
+  .carousel-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: none; cursor: pointer; padding: 0;
+    transition: all 0.3s ease;
+  }
+  .carousel-dot.active {
+    width: 22px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+  }
+
+  /* carousel wrapper */
+  .carousel-wrap { position: relative; }
+}
+
+/* Hide hint & dots on desktop */
+@media (min-width: 769px) {
+  .carousel-hint, .carousel-dots, .carousel-wrap { display: contents; }
+  .carousel-hint, .carousel-dots { display: none !important; }
+}
