@@ -829,6 +829,12 @@
     app.style.display='flex';
     document.getElementById('tbNum').textContent='+91 '+ALLOWED.replace(/(\d{5})(\d{5})/,'$1 $2');
     renderAll();
+    /* Seed the server bin with current plans on every admin login */
+    fetch('/api/plans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(plans),
+    }).catch(() => {});
   }
 
   document.getElementById('logoutBtn').addEventListener('click',()=>{ sessionStorage.removeItem(SESS_KEY); location.reload(); });

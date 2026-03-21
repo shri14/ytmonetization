@@ -24,7 +24,10 @@ async function readPlans() {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return Array.isArray(data) ? data : null;
+  /* Handle both plain array [...] and object {plans:[...]} formats */
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.plans)) return data.plans;
+  return null;
 }
 
 async function writePlans(plans) {
