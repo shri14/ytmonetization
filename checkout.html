@@ -1563,10 +1563,12 @@
         return;
       }
 
-      /* Use upi://pay? for all — triggers native Android app chooser */
-      const upiUrl = `upi://pay?${base}`;
-
-      const url = upiUrl;
+      /* Android: intent:// without package forces app chooser instead of default app */
+      /* iOS: upi:// (hidden anyway, QR instructions shown instead) */
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const url = isAndroid
+        ? `intent://pay?${base}#Intent;scheme=upi;action=android.intent.action.VIEW;end`
+        : `upi://pay?${base}`;
 
       /* Mark payment as interacted */
       paymentInteracted = true;
