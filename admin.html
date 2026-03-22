@@ -1269,9 +1269,9 @@
         if (hash === _lastOrdersHash) return; // nothing changed
         const prevCount = orders.length;
         _lastOrdersHash = hash;
-        // Server is source of truth — merge keeping local screenshotData
+        // Server is source of truth — screenshotData comes from server (compressed base64)
         const localMap = new Map(orders.map(o => [o.id, o]));
-        orders = apiOrders.map(o => ({ ...o, screenshotData: localMap.get(o.id)?.screenshotData || '' }))
+        orders = apiOrders.map(o => ({ ...o, screenshotData: o.screenshotData || localMap.get(o.id)?.screenshotData || '' }))
                           .sort((a, b) => new Date(b.date) - new Date(a.date));
         localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
         updatePendingBadge();

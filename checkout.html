@@ -1686,6 +1686,23 @@
       confirmBtn.style.pointerEvents = 'none';
     });
 
+    /* Compress image to max 800px wide, JPEG 0.65 quality (~50-120KB) */
+    function compressImage(dataUrl) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 800;
+          let w = img.width, h = img.height;
+          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.65));
+        };
+        img.src = dataUrl;
+      });
+    }
+
     function handleFile(file) {
       uploadedFile = file;
       const reader = new FileReader();
@@ -1708,7 +1725,8 @@
       const mobile  = document.getElementById('mobile').value.trim();
       const message = document.getElementById('message').value.trim();
       const ref     = 'YTM' + Date.now().toString(36).toUpperCase().slice(-6);
-      const ssData  = uploadedFile ? previewImg.src : ''; // base64 screenshot
+      // Compress screenshot so it fits within JSONBin's 1MB limit
+      const ssData  = uploadedFile ? await compressImage(previewImg.src) : '';
 
       // 1️⃣ Save order to localStorage (with screenshot base64 for admin view)
       const orderRecord = {
@@ -1740,13 +1758,11 @@
         }
       } catch(e) {}
 
-      // Also POST to server API so cross-device (iPhone → PC admin) works
-      // Strip screenshotData (base64) — too large for JSONBin (~1MB limit)
-      const { screenshotData: _ignored, ...apiRecord } = orderRecord;
+      // POST to server API — screenshotData is compressed (~50-120KB) so fits JSONBin
       fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(apiRecord)
+        body: JSON.stringify(orderRecord)
       }).catch(() => {}); // silent fail — localStorage is fallback
 
       // 2️⃣ Fill customer receipt overlay
