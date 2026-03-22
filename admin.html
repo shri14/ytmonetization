@@ -838,14 +838,16 @@
   function loadPlans(){ try{ const d=localStorage.getItem(DATA_KEY); return d?JSON.parse(d):JSON.parse(JSON.stringify(DEFAULTS)); }catch{ return JSON.parse(JSON.stringify(DEFAULTS)); } }
   function savePlans(){
     localStorage.setItem(DATA_KEY, JSON.stringify(plans));
+    /* Update hash so our own poll doesn't re-render + toast for this save */
+    _lastPlansHash = JSON.stringify(plans.map(p => p.id + (p.name||'') + p.price));
     /* Notify all other open tabs instantly */
     bc?.postMessage({ type:'plans_updated' });
-    /* Sync to server so all devices (mobile, desktop) see the update */
+    /* Sync to server so all devices see the update */
     fetch('/api/plans', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(plans),
-    }).catch(() => {}); /* silent fail — localStorage is still the truth locally */
+    }).catch(() => {});
   }
   function uid(){ return Math.random().toString(36).slice(2,9); }
 
@@ -955,12 +957,40 @@
     app.style.display='flex';
     document.getElementById('tbNum').textContent='+91 '+ALLOWED.replace(/(\d{5})(\d{5})/,'$1 $2');
     renderAll();
-    /* Seed the server bin with current plans on every admin login */
-    fetch('/api/plans', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(plans),
-    }).catch(() => {});
+    /* On login: pull plans from server (source of truth) then start polling */
+    fetchAndMergePlans(() => { renderAll(); startPlansSync(); });
+  }
+
+  function fetchAndMergePlans(cb) {
+    fetch('/api/plans')
+      .then(r => r.json())
+      .then(serverPlans => {
+        if (Array.isArray(serverPlans) && serverPlans.length > 0) {
+          plans = serverPlans;
+          localStorage.setItem(DATA_KEY, JSON.stringify(plans));
+        }
+        if (cb) cb();
+      })
+      .catch(() => { if (cb) cb(); });
+  }
+
+  let _lastPlansHash = '';
+  function startPlansSync() {
+    setInterval(() => {
+      fetch('/api/plans')
+        .then(r => r.json())
+        .then(serverPlans => {
+          if (!Array.isArray(serverPlans)) return;
+          const hash = JSON.stringify(serverPlans.map(p => p.id + (p.name||'') + p.price));
+          if (hash === _lastPlansHash) return;
+          _lastPlansHash = hash;
+          plans = serverPlans;
+          localStorage.setItem(DATA_KEY, JSON.stringify(plans));
+          renderAll();
+          showToast('Plans updated', 'green');
+        })
+        .catch(() => {});
+    }, 5000);
   }
 
   document.getElementById('logoutBtn').addEventListener('click',()=>{ sessionStorage.removeItem(SESS_KEY); location.reload(); });
