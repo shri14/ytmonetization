@@ -1426,9 +1426,9 @@
           <div class="oc-ref">#${o.id}</div>
           <div class="oc-name">${pfx[o.platform]||''} ${o.plan}</div>
           <div class="oc-service">${o.service||''}</div>
-          ${o.hasScreenshot ? `<div class="ss-chip" style="margin-top:.35rem">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1"/><path d="M1 4h8" stroke="currentColor" stroke-width="1"/></svg>
-            Screenshot attached
+          ${o.utrId ? `<div class="ss-chip" style="margin-top:.35rem">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 5l2.5 2.5L9 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            UTR: ${o.utrId}
           </div>` : ''}
         </div>
         <div class="oc-meta">
@@ -1510,17 +1510,7 @@
         <div class="od-row"><span class="od-key">Profile Link</span><a class="od-val od-val-link" href="${o.profileLink}" target="_blank">${o.profileLink}</a></div>
         ${o.mobile ? `<div class="od-row"><span class="od-key">Mobile</span><span class="od-val">${o.mobile}</span></div>` : ''}
         ${o.message ? `<div class="od-row"><span class="od-key">Note</span><span class="od-val">${o.message}</span></div>` : ''}
-        <div class="od-row"><span class="od-key">Screenshot</span><span class="od-val">${o.hasScreenshot ? `<span class="ss-chip">✅ ${o.screenshotName||'Attached'}</span>` : '❌ Not uploaded'}</span></div>
-        ${o.screenshotData ? `
-        <div style="margin-top:1rem">
-          <div style="font-size:.72rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Payment Screenshot</div>
-          <a href="${o.screenshotData}" target="_blank" title="Click to open full size">
-            <img src="${o.screenshotData}" alt="Payment Screenshot"
-              style="width:100%;max-height:320px;object-fit:contain;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#0a0a0f;cursor:pointer;transition:opacity .2s"
-              onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          </a>
-          <div style="font-size:.7rem;color:var(--text3);margin-top:.35rem;text-align:center">Click image to view full size</div>
-        </div>` : ''}
+        <div class="od-row"><span class="od-key">Transaction ID</span><span class="od-val od-val-green" style="font-family:monospace;font-size:.85rem">${o.utrId || '—'}</span></div>
       </div>
       <div>
         <label style="font-size:.75rem;font-weight:600;color:var(--text2);display:block;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em">Update Status</label>
