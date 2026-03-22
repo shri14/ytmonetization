@@ -252,21 +252,97 @@
     /* RESPONSIVE */
     @media(max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:900px){.plans-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
-    @media(max-width:640px){
-      .topbar{padding:0 1rem}.topbar-inner{height:56px}
+
+    /* ══ MOBILE ≤768px ══ */
+    @media(max-width:768px){
+      /* Topbar */
+      .topbar{padding:0 1rem}
+      .topbar-inner{height:54px;gap:.6rem}
+      .tb-brand{font-size:.95rem;gap:.4rem}
+      .tb-brand svg{width:22px;height:22px}
       .tb-num{display:none}
-      .admin-main{padding:1.25rem 1rem 3rem}
-      .ph-left h1{font-size:1.4rem}
-      .stats{grid-template-columns:repeat(2,1fr);gap:.75rem}
-      .stat-num{font-size:1.6rem}
+      .tb-right{gap:.5rem}
+
+      /* Main layout */
+      .admin-main{padding:1rem .75rem 4rem}
+
+      /* Page header — stack title + buttons */
+      .ph{flex-direction:column;align-items:flex-start;gap:.75rem}
+      .ph-left h1{font-size:1.3rem}
+      .ph-left p{font-size:.8rem}
+      .ph > button,.ph > div{width:100%}
+      .ph > div{display:flex;gap:.5rem}
+      .ph > div button,.ph > button{flex:1;justify-content:center}
+
+      /* Stats — 2 cols */
+      .stats{grid-template-columns:repeat(2,1fr);gap:.6rem}
+      .stat{padding:.9rem 1rem}
+      .stat-num{font-size:1.5rem}
+      .stat-lbl{font-size:.7rem}
+      .stat-ico{width:34px;height:34px}
+
+      /* Tab nav — scrollable */
+      .tab-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;width:100%}
+      .tab-nav::-webkit-scrollbar{display:none}
+      .tab-btn{padding:.4rem .75rem;font-size:.78rem;white-space:nowrap;flex-shrink:0}
+
+      /* Filters — scrollable */
+      .filters{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;padding-bottom:.25rem}
+      .filters::-webkit-scrollbar{display:none}
+      .fbtn{white-space:nowrap;flex-shrink:0}
+
+      /* Plans grid */
       .plans-grid{grid-template-columns:1fr}
+      .pcard{padding:1.1rem 1rem}
+
+      /* Order cards — compact mobile layout */
+      .order-card{padding:.85rem 1rem;gap:.65rem;flex-direction:column;align-items:stretch}
+      .oc-top-row{display:flex;align-items:center;gap:.65rem;width:100%}
+      .oc-status-bar{height:36px}
+      .oc-info{min-width:0}
+      .oc-name{font-size:.88rem}
+      .oc-meta{flex-direction:row;justify-content:space-between;align-items:center;min-width:0;width:100%}
+      .oc-price{font-size:1rem}
+      .oc-actions{flex-direction:row;align-items:center;width:100%;margin-left:0;gap:.5rem}
+      .status-select{flex:1;font-size:.75rem;padding:.35rem .5rem}
+      .oc-view-btn{flex:1;justify-content:center;font-size:.75rem;padding:.4rem .6rem}
+
+      /* Modal */
       .mgrid{grid-template-columns:1fr}
+      .modal-inner{padding:1.25rem;max-height:92vh;margin:.5rem}
+      .mfoot{flex-direction:column-reverse;gap:.5rem}
+      .mbtn-cancel,.mbtn-save,.mbtn-del{width:100%;justify-content:center}
+
+      /* Login */
       .login-card{padding:1.75rem 1.25rem;border-radius:20px}
       .otp-box{width:42px;height:50px;font-size:1.3rem}
-      .mfoot{flex-direction:column-reverse}
-      .mbtn-cancel,.mbtn-save,.mbtn-del{width:100%;justify-content:center}
     }
-    @media(max-width:380px){.otp-boxes{gap:.3rem}.otp-box{width:36px;height:44px;font-size:1.1rem}}
+
+    /* ══ SMALL PHONES ≤480px ══ */
+    @media(max-width:480px){
+      .admin-main{padding:.85rem .65rem 4rem}
+      .ph-left h1{font-size:1.15rem}
+      .stats{grid-template-columns:repeat(2,1fr);gap:.5rem}
+      .stat{padding:.75rem .85rem}
+      .stat-num{font-size:1.3rem}
+      .stat-ico{width:30px;height:30px}
+      .stat-ico svg{width:14px;height:14px}
+      .tab-btn{padding:.35rem .6rem;font-size:.72rem}
+      .order-card{padding:.75rem .85rem;gap:.55rem}
+      .oc-name{font-size:.82rem}
+      .oc-ref{font-size:.65rem}
+      .oc-service{font-size:.72rem}
+      .oc-price{font-size:.95rem}
+      .date-group-label{font-size:.65rem}
+    }
+
+    /* ══ VERY SMALL ≤380px ══ */
+    @media(max-width:380px){
+      .otp-boxes{gap:.3rem}.otp-box{width:36px;height:44px;font-size:1.1rem}
+      .tb-brand span:last-child{display:none}
+      .stats{gap:.4rem}
+      .stat{padding:.65rem .75rem}
+    }
 
     /* ── TAB NAV ── */
     .tab-nav{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:3px}
