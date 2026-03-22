@@ -1196,43 +1196,13 @@
         <div class="pay-apps-col">
 
           <div class="pay-steps">
-            <div class="step"><div class="step-num">1</div><span id="step1Text">Scan the QR code or choose a payment app below</span></div>
+            <div class="step"><div class="step-num">1</div><span id="step1Text">Scan the QR code with any UPI app (GPay, PhonePe, Paytm…)</span></div>
             <div class="step"><div class="step-num">2</div><span>Enter amount <strong style="color:var(--text-2)" id="stepAmt">₹799</strong> and complete the payment</span></div>
             <div class="step"><div class="step-num">3</div><span>Enter your <strong style="color:var(--text-2)">Transaction ID</strong> below &amp; upload screenshot</span></div>
           </div>
 
           <!-- App toast -->
           <div id="appToast" class="app-toast"></div>
-
-          <!-- Pay via App buttons (uses <a> tags — more reliable than window.location) -->
-          <div id="payAppSection">
-            <p style="font-size:0.8rem;color:var(--text-3);margin:0 0 0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Pay directly via app</p>
-            <div id="upiAppGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-              <!-- Google Pay -->
-              <a id="link-gpay" href="#" style="display:flex;align-items:center;gap:10px;padding:0.85rem 1rem;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;transition:transform 0.2s,background 0.2s;">
-                <img src="https://play-lh.googleusercontent.com/Fm5PDRimTL_KsWyIRcTv9h0JLrTkDOMwh18SE819OXjEZhlwMYBHJXxUZ8eOBudxCsHC=w240-h480-rw" width="36" height="36" alt="Google Pay" style="border-radius:8px;">
-                Google Pay
-              </a>
-              <!-- PhonePe -->
-              <a id="link-phonepe" href="#" style="display:flex;align-items:center;gap:10px;padding:0.85rem 1rem;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;transition:transform 0.2s,background 0.2s;">
-                <img src="https://play-lh.googleusercontent.com/6iyA2zVz5PyyMjK5SIxdUhrb7oh9cYVXJ93q6DZkmx07Er1o90PXYeo6mzL4VC2Gj9s=w240-h480-rw" width="36" height="36" alt="PhonePe" style="border-radius:8px;">
-                PhonePe
-              </a>
-              <!-- Paytm -->
-              <a id="link-paytm" href="#" style="display:flex;align-items:center;gap:10px;padding:0.85rem 1rem;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;transition:transform 0.2s,background 0.2s;">
-                <img src="https://play-lh.googleusercontent.com/WDGsMRuVENnZPEpV4DEaXw12qtMY3em85xpmZqcXzeh0iT_eXFtAU9VUj-Z7xNQQd5DMqrkKSs9D0qbI1rlt=w240-h480-rw" width="36" height="36" alt="Paytm" style="border-radius:8px;">
-                Paytm
-              </a>
-              <!-- BHIM UPI -->
-              <a id="link-bhim" href="#" style="display:flex;align-items:center;gap:10px;padding:0.85rem 1rem;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;transition:transform 0.2s,background 0.2s;">
-                <img src="https://play-lh.googleusercontent.com/B5cNBA15IxjCT-8UTXEWgiPcGkJ1C07iHKwm2Hbs8xR3PnJvZ0swTag3abdC_Fj5OfnP=w240-h480-rw" width="36" height="36" alt="BHIM UPI" style="border-radius:8px;">
-                BHIM UPI
-              </a>
-            </div>
-            <p style="text-align:center;font-size:0.72rem;color:var(--text-3);margin-top:0.6rem;">
-              Tap to open the app with payment pre-filled
-            </p>
-          </div>
 
         </div>
       </div>
@@ -1541,75 +1511,6 @@
     const qrEl      = document.getElementById('qrImg');
     qrEl.src = dynamicQR;
 
-    /* ── PAYMENT APP DEEP LINKS (using <a> tags — most reliable) ── */
-    const ua        = navigator.userAgent || '';
-    const isAndroid = /Android/i.test(ua);
-    const isIOS     = /iPhone|iPad|iPod/i.test(ua);
-    const isMobile  = isAndroid || isIOS;
-
-    /* Build UPI query string — no tr param for app links.
-       @ptys merchant IDs validate tr against Paytm's order system,
-       so a random tr causes "receiver not allowing payments" failure.
-       Manual paste in UPI apps works because there's no tr. */
-    const enc     = encodeURIComponent(UPI_ID);
-    const upiName = encodeURIComponent(UPI_NAME);
-    const amt     = plan.price;
-    const tn      = encodeURIComponent('YTMonetization ' + plan.title);
-    const base    = `pa=${enc}&pn=${upiName}&am=${amt}&cu=INR&tn=${tn}`;
-
-    /* Set <a> tag hrefs for each app */
-    if (isAndroid) {
-      /* Android: intent:// with specific package opens the exact app */
-      document.getElementById('link-gpay').href    = `intent://pay?${base}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.google.android.apps.nbu.paisa.user;end`;
-      document.getElementById('link-phonepe').href = `intent://pay?${base}#Intent;scheme=upi;package=com.phonepe.app;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.phonepe.app;end`;
-      document.getElementById('link-paytm').href   = `intent://pay?${base}#Intent;scheme=upi;package=net.one97.paytm;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dnet.one97.paytm;end`;
-      document.getElementById('link-bhim').href    = `intent://pay?${base}#Intent;scheme=upi;package=in.org.npci.upiapp;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Din.org.npci.upiapp;end`;
-    } else if (isIOS) {
-      /* iOS: app-specific URL schemes (no universal upi:// on iOS) */
-      document.getElementById('link-gpay').href    = `gpay://upi/pay?${base}`;
-      document.getElementById('link-phonepe').href = `phonepe://pay?${base}`;
-      document.getElementById('link-paytm').href   = `paytm://upi/pay?${base}`;
-      document.getElementById('link-bhim').href    = `upi://pay?${base}`;
-    } else {
-      /* Desktop: hide app buttons, show QR hint */
-      const appSection = document.getElementById('payAppSection');
-      if (appSection) appSection.style.display = 'none';
-    }
-
-    /* When user taps an app link → listen for return to highlight UTR section */
-    document.querySelectorAll('#upiAppGrid a').forEach(link => {
-      link.addEventListener('click', () => {
-        paymentInteracted = true;
-        const onReturn = () => {
-          if (document.visibilityState === 'visible') {
-            document.removeEventListener('visibilitychange', onReturn);
-            setTimeout(() => {
-              verifySection.classList.add('highlight');
-              verifySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-              utrInput.focus();
-              showAppToast('Welcome back! Enter your Transaction ID below to confirm.');
-            }, 400);
-          }
-        };
-        document.addEventListener('visibilitychange', onReturn);
-
-        /* If app not installed (page stays visible), show toast */
-        setTimeout(() => {
-          if (!document.hidden) {
-            document.removeEventListener('visibilitychange', onReturn);
-            showAppToast('App not found? Try another app or scan the QR code.');
-          }
-        }, 2500);
-      });
-    });
-
-    function showAppToast(msg) {
-      const t = document.getElementById('appToast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(t._timer);
-      t._timer = setTimeout(() => t.classList.remove('show'), 4500);
-    }
 
     /* ── CHAR COUNT ── */
     document.getElementById('message').addEventListener('input', function() {
