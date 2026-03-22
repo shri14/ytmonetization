@@ -1547,13 +1547,15 @@
     const isIOS     = /iPhone|iPad|iPod/i.test(ua);
     const isMobile  = isAndroid || isIOS;
 
-    /* Build UPI query string */
-    const enc  = encodeURIComponent(UPI_ID);
+    /* Build UPI query string — no tr param for app links.
+       @ptys merchant IDs validate tr against Paytm's order system,
+       so a random tr causes "receiver not allowing payments" failure.
+       Manual paste in UPI apps works because there's no tr. */
+    const enc     = encodeURIComponent(UPI_ID);
     const upiName = encodeURIComponent(UPI_NAME);
-    const amt  = plan.price;
-    const tn   = encodeURIComponent('YTMonetization ' + plan.title);
-    const tr   = `YTM${Date.now()}`;
-    const base = `pa=${enc}&pn=${upiName}&am=${amt}&cu=INR&tn=${tn}&tr=${tr}`;
+    const amt     = plan.price;
+    const tn      = encodeURIComponent('YTMonetization ' + plan.title);
+    const base    = `pa=${enc}&pn=${upiName}&am=${amt}&cu=INR&tn=${tn}`;
 
     /* Set <a> tag hrefs for each app */
     if (isAndroid) {
