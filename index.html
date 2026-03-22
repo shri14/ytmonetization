@@ -220,7 +220,7 @@
                 Full Monetization Bundles
               </li>
             </ul>
-            <a href="#pricing" class="service-cta yt-cta">
+            <a href="#pricing" class="service-cta yt-cta" onclick="event.preventDefault();selectPricingTab('youtube')">
               View YouTube Plans
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </a>
@@ -256,7 +256,7 @@
                 Comments & Shares
               </li>
             </ul>
-            <a href="#pricing" class="service-cta ig-cta">
+            <a href="#pricing" class="service-cta ig-cta" onclick="event.preventDefault();selectPricingTab('instagram')">
               View Instagram Plans
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </a>
@@ -292,7 +292,7 @@
                 Full Monetization Bundles
               </li>
             </ul>
-            <a href="#pricing" class="service-cta fb-cta">
+            <a href="#pricing" class="service-cta fb-cta" onclick="event.preventDefault();selectPricingTab('facebook')">
               View Facebook Plans
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </a>
@@ -938,6 +938,18 @@
         el.innerHTML = group.map((plan, i) => renderCard(plan, i * 100)).join('');
         initCarousel(id, dots, hint);
       });
+    }
+
+    /* Service card → scroll to pricing and activate correct tab */
+    window.selectPricingTab = function selectPricingTab(platform) {
+      document.querySelectorAll('.pricing-tab').forEach(b => b.classList.remove('active'));
+      const target = document.querySelector(`.pricing-tab[data-platform="${platform}"]`);
+      if (target) target.classList.add('active');
+      ['youtube','instagram','facebook'].forEach(p => {
+        const wrap = document.getElementById(p + '-wrap');
+        if (wrap) wrap.classList.toggle('hidden', p !== platform);
+      });
+      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     /* Tab switching — also toggle carousel-wrap */
