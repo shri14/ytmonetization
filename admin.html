@@ -353,27 +353,52 @@
     @media(max-width:480px){
       .admin-main{padding:.85rem .65rem 4rem}
       .ph-left h1{font-size:1.15rem}
+      .ph-left p{font-size:.75rem}
       .stats{grid-template-columns:repeat(2,1fr);gap:.5rem}
       .stat{padding:.75rem .85rem}
       .stat-num{font-size:1.3rem}
       .stat-ico{width:30px;height:30px}
       .stat-ico svg{width:14px;height:14px}
-      .tab-btn{padding:.35rem .6rem;font-size:.72rem}
+      .tab-btn{padding:.35rem .6rem;font-size:.72rem;min-height:36px}
       .order-card{padding:.75rem .85rem;gap:.55rem}
       .oc-name{font-size:.82rem}
       .oc-ref{font-size:.65rem}
       .oc-service{font-size:.72rem}
       .oc-price{font-size:.95rem}
       .date-group-label{font-size:.65rem}
+      .login-card{padding:1.5rem 1rem;border-radius:18px}
+      .otp-box{width:40px;height:48px;font-size:1.2rem}
     }
 
     /* ══ VERY SMALL ≤380px ══ */
     @media(max-width:380px){
-      .otp-boxes{gap:.3rem}.otp-box{width:36px;height:44px;font-size:1.1rem}
+      .otp-boxes{gap:.25rem}
+      .otp-box{width:36px;height:44px;font-size:1.1rem}
       .tb-brand span:last-child{display:none}
       .stats{gap:.4rem}
       .stat{padding:.65rem .75rem}
+      .ph-left h1{font-size:1.05rem}
+      .add-btn{font-size:.78rem;padding:.6rem 1rem}
     }
+
+    /* ══ 320px: iPhone SE / smallest ══ */
+    @media(max-width:320px){
+      .admin-main{padding:.75rem .5rem 3.5rem}
+      .otp-boxes{gap:.2rem}
+      .otp-box{width:32px;height:40px;font-size:1rem}
+      .login-card{padding:1.25rem .875rem;border-radius:16px}
+      .tab-btn{padding:.3rem .5rem;font-size:.68rem}
+      .stat{padding:.6rem .65rem}
+      .stat-num{font-size:1.15rem}
+      .order-card{padding:.65rem .75rem}
+      .modal-inner{margin:.25rem;padding:1rem}
+    }
+
+    /* ══ GLOBAL ADMIN TOUCH POLISH ══ */
+    a,button,[role=button]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+    .status-select,.oc-view-btn,.tab-btn,.fbtn{min-height:36px}
+    .lbtn{min-height:50px}
+    .add-btn{min-height:44px}
 
     /* ── TAB NAV ── */
     .tab-nav{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:3px}
