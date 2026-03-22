@@ -1540,6 +1540,15 @@ body {
     padding: 0.5rem 0.25rem 1rem;
   }
 
+  /* Shrink the "Most Popular" badge so it doesn't cover the price */
+  .pricing-grid .price-card .popular-badge {
+    font-size: 0.38rem !important;
+    padding: 0.18rem 0.35rem !important;
+    top: 0.4rem !important;
+    right: 0.4rem !important;
+    letter-spacing: 0.03em;
+  }
+
   .pricing-grid .price-card {
     padding: 0.9rem 0.45rem;
     gap: 0.65rem;
