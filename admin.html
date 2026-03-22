@@ -1497,14 +1497,19 @@
   document.getElementById('clearOrdersBtn').addEventListener('click', () => {
     if (!confirm('Delete ALL orders? This cannot be undone.')) return;
     orders = [];
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    _lastOrdersHash = ''; // force all devices to re-render on next poll
+    localStorage.setItem(ORDERS_KEY, '[]');
     updatePendingBadge();
+    updateOrderStats();
     renderOrders();
     showToast('Clearing all orders…', 'red');
-    /* Also wipe from server so other devices don't get them back */
+    /* Wipe from server — all other admin devices will clear within 5s */
     fetch('/api/orders', { method: 'DELETE' })
-      .then(() => showToast('All orders cleared on all devices', 'red'))
-      .catch(() => showToast('Local cleared — server sync failed', 'red'));
+      .then(r => {
+        if (r.ok) showToast('All orders cleared on all devices', 'red');
+        else showToast('Server error — refresh and try again', 'red');
+      })
+      .catch(() => showToast('Network error — server not updated', 'red'));
   });
 
   /* expose globals */
