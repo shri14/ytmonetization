@@ -914,14 +914,9 @@
         }, 50);
       });
 
-      // Show/hide hint and dots based on screen size
-      const updateVisibility = () => {
-        const mobile = isMobile();
-        dotsEl.style.display = mobile ? 'flex' : 'none';
-        if (hintEl) hintEl.style.display = mobile && cards.length > 1 ? 'flex' : 'none';
-      };
-      updateVisibility();
-      window.addEventListener('resize', updateVisibility);
+      // Hide dots and hints — mobile now uses 3-col grid, no carousel
+      dotsEl.style.display = 'none';
+      if (hintEl) hintEl.style.display = 'none';
     }
 
     function renderPricingSection() {

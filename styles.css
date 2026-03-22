@@ -1531,103 +1531,106 @@ body {
   .hero-search-dropdown { max-height: 240px; }
 }
 
-/* ═══════════════ MOBILE PRICING CAROUSEL (iPhone + Android) ═══════════════ */
+/* ═══════════════ MOBILE PRICING GRID — 3 cards per row ═══════════════ */
 @media (max-width: 860px) {
   .pricing-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto;
-    /* iOS Safari */
-    -webkit-overflow-scrolling: touch;
-    /* Both iOS & Android Chrome */
-    scroll-snap-type: x mandatory;
-    -webkit-scroll-snap-type: x mandatory;
-    gap: 1rem;
-    padding: 0.5rem 1.25rem 1.5rem;
-    /* hide scrollbar: Chrome/Safari/Android */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    scroll-behavior: smooth;
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
-    /* prevent momentum scroll from triggering page scroll on Android */
-    overscroll-behavior-x: contain;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem 1rem;
   }
-  .pricing-grid::-webkit-scrollbar { display: none; }
 
   .pricing-grid .price-card {
-    min-width: 80vw;
-    max-width: 80vw;
-    scroll-snap-align: center;
-    -webkit-scroll-snap-align: center;
-    flex-shrink: 0;
+    padding: 0.9rem 0.45rem;
+    gap: 0.65rem;
+    border-radius: 12px;
     transform: none !important;
-    /* smooth tap on Android */
     -webkit-tap-highlight-color: transparent;
-    touch-action: pan-x;
+    overflow: hidden;
+    min-width: 0; /* prevent grid blowout */
+    word-break: break-word;
   }
   .pricing-grid .price-card-featured {
     transform: none !important;
     border-color: rgba(255,65,108,0.45);
-    box-shadow: 0 0 30px rgba(255,65,108,0.15);
+    box-shadow: 0 0 20px rgba(255,65,108,0.12);
   }
 
-  /* swipe hint arrow */
-  .carousel-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-    letter-spacing: 0.03em;
-    animation: hintPulse 2s ease-in-out infinite;
-    -webkit-animation: hintPulse 2s ease-in-out infinite;
-  }
-  .carousel-hint svg { flex-shrink: 0; }
-  @keyframes hintPulse {
-    0%,100% { opacity: 0.5; transform: translateX(0); }
-    50%      { opacity: 1;   transform: translateX(4px); }
-  }
-  @-webkit-keyframes hintPulse {
-    0%,100% { opacity: 0.5; -webkit-transform: translateX(0); }
-    50%      { opacity: 1;   -webkit-transform: translateX(4px); }
+  /* ── Compact typography for 3-col mobile ── */
+
+  /* Plan name tag */
+  .pricing-grid .price-card .price-tag {
+    font-size: 0.55rem !important;
+    letter-spacing: 0.04em;
   }
 
-  /* dot indicators */
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 7px;
-    margin-top: 1.25rem;
+  /* Price amount — must not wrap */
+  .pricing-grid .price-card .price-amount {
+    font-size: 1.15rem !important;
+    line-height: 1.1;
+    white-space: nowrap !important;
   }
-  .carousel-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.18);
-    border: none; cursor: pointer; padding: 0;
-    transition: all 0.3s ease;
-    /* Android tap area */
-    min-width: 20px; min-height: 20px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .carousel-dot::after {
-    content: '';
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.18);
-    transition: all 0.3s ease;
-    display: block;
-  }
-  .carousel-dot.active::after {
-    width: 22px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+  .pricing-grid .price-card .price-amount .currency {
+    font-size: 0.55rem !important;
   }
 
-  /* carousel wrapper */
+  /* Period text */
+  .pricing-grid .price-card .price-period {
+    font-size: 0.5rem !important;
+  }
+
+  /* Features list */
+  .pricing-grid .price-card .price-features {
+    font-size: 0.58rem !important;
+    gap: 0.2rem !important;
+    line-height: 1.25;
+  }
+  .pricing-grid .price-card .price-features li {
+    font-size: 0.58rem !important;
+    gap: 0.2rem;
+  }
+  .pricing-grid .price-card .price-features li svg {
+    width: 10px !important;
+    height: 10px !important;
+    min-width: 10px;
+    flex-shrink: 0;
+  }
+
+  /* Buy button */
+  .pricing-grid .price-card .price-btn {
+    padding: 0.45rem 0.3rem !important;
+    font-size: 0.6rem !important;
+    border-radius: 8px;
+  }
+
+  /* Hide carousel UI — no longer needed */
+  .carousel-hint, .carousel-dots { display: none !important; }
   .carousel-wrap { position: relative; }
+}
+
+/* Even smaller phones (≤390px) — tighter spacing */
+@media (max-width: 390px) {
+  .pricing-grid {
+    gap: 0.35rem;
+    padding: 0.4rem 0.15rem 0.8rem;
+  }
+  .pricing-grid .price-card {
+    padding: 0.75rem 0.35rem;
+    gap: 0.5rem;
+  }
+  .pricing-grid .price-card .price-tag {
+    font-size: 0.5rem !important;
+  }
+  .pricing-grid .price-card .price-amount {
+    font-size: 1rem !important;
+  }
+  .pricing-grid .price-card .price-features li {
+    font-size: 0.52rem !important;
+  }
+  .pricing-grid .price-card .price-btn {
+    padding: 0.4rem 0.25rem !important;
+    font-size: 0.55rem !important;
+  }
 }
 
 /* Hide hint & dots on desktop */
