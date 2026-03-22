@@ -253,6 +253,37 @@
     @media(max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:900px){.plans-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
 
+    /* ── MOBILE BOTTOM TAB BAR ── */
+    .mobile-tab-bar{display:none}
+    @media(max-width:768px){
+      /* Hide topbar tab nav on mobile */
+      #tabNav{display:none}
+      .tb-pill{display:none}
+      /* Show bottom tab bar */
+      .mobile-tab-bar{
+        display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;
+        background:rgba(6,9,18,.96);backdrop-filter:blur(20px);
+        border-top:1px solid rgba(255,255,255,.1);
+        padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom));
+        gap:.5rem;
+      }
+      .mob-tab{
+        flex:1;display:flex;flex-direction:column;align-items:center;gap:.25rem;
+        background:transparent;border:none;color:rgba(255,255,255,.45);
+        font-size:.7rem;font-weight:600;padding:.5rem .25rem;
+        border-radius:10px;cursor:pointer;transition:all .2s;position:relative;
+      }
+      .mob-tab.active{color:#FF416C;background:rgba(255,65,108,.08)}
+      .mob-tab svg{opacity:.6;transition:opacity .2s}
+      .mob-tab.active svg{opacity:1}
+      .mob-tab-badge{
+        position:absolute;top:.25rem;right:calc(50% - 18px);
+        background:#FF416C;color:#fff;font-size:.6rem;font-weight:700;
+        padding:.1rem .3rem;border-radius:100px;min-width:16px;text-align:center;
+        line-height:1.4;
+      }
+    }
+
     /* ══ MOBILE ≤768px ══ */
     @media(max-width:768px){
       /* Topbar */
@@ -263,8 +294,8 @@
       .tb-num{display:none}
       .tb-right{gap:.5rem}
 
-      /* Main layout */
-      .admin-main{padding:1rem .75rem 4rem}
+      /* Main layout — extra bottom padding for fixed bottom bar */
+      .admin-main{padding:1rem .75rem 5.5rem}
 
       /* Page header — stack title + buttons */
       .ph{flex-direction:column;align-items:flex-start;gap:.75rem}
@@ -540,7 +571,7 @@
         <div class="tb-brand-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4l10 4L3 12V4z" fill="white"/></svg></div>
         <span>YT<span class="acc">Monetization</span></span>
       </a>
-      <!-- Tab Navigation -->
+      <!-- Tab Navigation (desktop only — mobile uses bottom nav) -->
       <div class="tab-nav" id="tabNav">
         <button class="tab-btn active" data-tab="plans">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/></svg>
@@ -567,6 +598,19 @@
       </div>
     </div>
   </nav>
+
+  <!-- Mobile Bottom Tab Bar -->
+  <div class="mobile-tab-bar" id="mobileTabBar">
+    <button class="mob-tab active" data-tab="plans">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h16" stroke="currentColor" stroke-width="1.5"/><path d="M6 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>Plans</span>
+    </button>
+    <button class="mob-tab" data-tab="orders">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>Orders</span>
+      <span class="mob-tab-badge" id="pendingBadgeMob" style="display:none">0</span>
+    </button>
+  </div>
 
   <div class="admin-main">
     <!-- Header -->
@@ -1137,12 +1181,20 @@
     loadOrders(() => renderOrders()); // load (+ API merge) then render
   };
 
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.mob-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    tab === 'orders' ? ORDERS_SECTION() : PLANS_SECTION();
+  }
+
   document.getElementById('tabNav').addEventListener('click', e => {
     const btn = e.target.closest('.tab-btn');
-    if (!btn) return;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    btn.dataset.tab === 'orders' ? ORDERS_SECTION() : PLANS_SECTION();
+    if (btn) switchTab(btn.dataset.tab);
+  });
+
+  document.getElementById('mobileTabBar').addEventListener('click', e => {
+    const btn = e.target.closest('.mob-tab');
+    if (btn) switchTab(btn.dataset.tab);
   });
 
   /* ══════════════════════════════════════
@@ -1219,9 +1271,11 @@
 
   function updatePendingBadge() {
     const count = orders.filter(o => o.status === 'pending').length;
+    const show = count > 0 ? 'inline-block' : 'none';
     const badge = document.getElementById('pendingBadge');
-    badge.style.display = count > 0 ? 'inline-block' : 'none';
-    badge.textContent   = count;
+    badge.style.display = show; badge.textContent = count;
+    const badgeMob = document.getElementById('pendingBadgeMob');
+    badgeMob.style.display = show; badgeMob.textContent = count;
   }
 
   function updateOrderStats() {
