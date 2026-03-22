@@ -1469,6 +1469,18 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orders[idx])
     }).catch(() => {});
+
+    /* Send email on completed or cancelled */
+    if (newStatus === 'completed' || newStatus === 'cancelled') {
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type:  newStatus === 'completed' ? 'order_complete' : 'order_cancel',
+          order: orders[idx]
+        })
+      }).catch(() => {});
+    }
     updatePendingBadge();
     updateOrderStats();
     /* re-render just the badge on the card */

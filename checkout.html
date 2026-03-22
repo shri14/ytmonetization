@@ -1129,6 +1129,20 @@
             </span>
           </div>
 
+          <div class="form-group">
+            <label for="email">Email Address <span style="color:var(--red,#FF416C);font-size:.7rem">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M2 6l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <input type="email" id="email" placeholder="your@email.com" autocomplete="email" />
+            </div>
+            <span class="error-msg" id="emailError">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#F87171" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.5" stroke="#F87171" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Enter a valid email address
+            </span>
+          </div>
+
           <div class="form-group" style="margin-bottom:1.5rem;">
             <label for="message">Your Message <span style="color:var(--text-3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
             <div class="input-wrap">
@@ -1502,6 +1516,16 @@
         mobile.classList.remove('error');
         document.getElementById('mobileError').classList.remove('show');
       }
+      const emailEl = document.getElementById('email');
+      const emailVal = emailEl.value.trim();
+      if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        emailEl.classList.add('error');
+        document.getElementById('emailError').classList.add('show');
+        ok = false;
+      } else {
+        emailEl.classList.remove('error');
+        document.getElementById('emailError').classList.remove('show');
+      }
       return ok;
     }
 
@@ -1567,6 +1591,7 @@
 
       const link    = document.getElementById('profileLink').value.trim();
       const mobile  = document.getElementById('mobile').value.trim();
+      const email   = document.getElementById('email').value.trim();
       const message = document.getElementById('message').value.trim();
       const ref     = 'YTM' + Date.now().toString(36).toUpperCase().slice(-6);
 
@@ -1582,6 +1607,7 @@
         utrId:       val,
         profileLink: link,
         mobile:      mobile ? '+91' + mobile : '',
+        email:       email,
         message:     message,
         start:       plan.start,
         delivery:    plan.complete,
@@ -1603,6 +1629,13 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderRecord)
+      }).catch(() => {});
+
+      /* Send confirmation email to user + admin */
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'new_order', order: orderRecord })
       }).catch(() => {});
 
       /* Fill receipt */
