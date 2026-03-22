@@ -15,7 +15,7 @@ const API_KEY  = process.env.JSONBIN_KEY;
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
 }
 
 async function readOrders() {
@@ -65,6 +65,11 @@ module.exports = async function handler(req, res) {
       }
 
       await writeOrders(orders);
+      return res.status(200).json({ ok: true });
+    }
+
+    if (req.method === 'DELETE') {
+      await writeOrders([]);
       return res.status(200).json({ ok: true });
     }
 

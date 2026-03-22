@@ -1494,7 +1494,11 @@
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
     updatePendingBadge();
     renderOrders();
-    showToast('All orders cleared', 'red');
+    showToast('Clearing all orders…', 'red');
+    /* Also wipe from server so other devices don't get them back */
+    fetch('/api/orders', { method: 'DELETE' })
+      .then(() => showToast('All orders cleared on all devices', 'red'))
+      .catch(() => showToast('Local cleared — server sync failed', 'red'));
   });
 
   /* expose globals */
