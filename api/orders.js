@@ -69,7 +69,14 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      await writeOrders([]);
+      // JSONBin rejects bare empty arrays — write a sentinel object instead.
+      // readOrders() returns [] for any non-array value, so GET still returns [].
+      const r = await fetch(BIN_URL, {
+        method : 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+        body   : JSON.stringify({ _cleared: true }),
+      });
+      if (!r.ok) throw new Error(`JSONBin write failed: ${r.status}`);
       return res.status(200).json({ ok: true });
     }
 
