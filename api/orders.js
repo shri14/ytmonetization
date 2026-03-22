@@ -35,16 +35,23 @@ async function readOrders() {
   });
   if (!r.ok) return [];
   const data = await r.json();
-  return Array.isArray(data) ? data : (Array.isArray(data.record) ? data.record : []);
+  const arr = Array.isArray(data) ? data : (Array.isArray(data.record) ? data.record : []);
+  // Filter out the _cleared sentinel used when orders are wiped
+  return arr.filter(o => o && o.id);
 }
 
 async function writeOrders(orders) {
+  // JSONBin rejects truly empty arrays — use a sentinel when clearing
+  const payload = orders.length > 0 ? orders.map(slim) : [{ _cleared: true }];
   const r = await fetch(BIN_URL, {
     method : 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-    body   : JSON.stringify(orders.map(slim)),
+    body   : JSON.stringify(payload),
   });
-  if (!r.ok) throw new Error(`JSONBin write failed: ${r.status}`);
+  if (!r.ok) {
+    const txt = await r.text().catch(() => '');
+    throw new Error(`JSONBin write failed: ${r.status} ${txt}`);
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -80,7 +87,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      await writeOrders([]);
+      await writeOrders([]); // writeOrders handles empty → sentinel automatically
       return res.status(200).json({ ok: true });
     }
 
