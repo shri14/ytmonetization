@@ -1,12 +1,17 @@
 /**
  * Vercel Serverless Function — /api/orders
- * GET  → return all orders
- * POST → add new / update existing order
+ * GET    → return all orders (no screenshotData)
+ * POST   → add new / update existing order (strips screenshotData before save)
+ * DELETE → clear all orders
  * Storage: JSONBin.io
  *
  * Env vars needed in Vercel dashboard:
  *   JSONBIN_KEY      → your JSONBin master key
  *   ORDERS_BIN_ID    → bin ID for orders
+ *
+ * Screenshots are NEVER stored in JSONBin — they live in localStorage only.
+ * This keeps the bin well under JSONBin's 100 KB free-tier limit and prevents
+ * write failures that would break cross-device sync.
  */
 
 const BIN_URL = `https://api.jsonbin.io/v3/b/${process.env.ORDERS_BIN_ID}`;
@@ -16,6 +21,12 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+}
+
+/** Strip large base64 screenshot before writing to JSONBin */
+function slim(order) {
+  const { screenshotData, ...rest } = order;
+  return rest;
 }
 
 async function readOrders() {
@@ -31,7 +42,7 @@ async function writeOrders(orders) {
   const r = await fetch(BIN_URL, {
     method : 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-    body   : JSON.stringify(orders),
+    body   : JSON.stringify(orders.map(slim)),
   });
   if (!r.ok) throw new Error(`JSONBin write failed: ${r.status}`);
 }
@@ -59,9 +70,9 @@ module.exports = async function handler(req, res) {
       const idx = orders.findIndex(o => o.id === incoming.id);
 
       if (idx === -1) {
-        orders.unshift(incoming);
+        orders.unshift(slim(incoming));
       } else {
-        orders[idx] = { ...orders[idx], ...incoming };
+        orders[idx] = { ...orders[idx], ...slim(incoming) };
       }
 
       await writeOrders(orders);
@@ -69,14 +80,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      // JSONBin rejects bare empty arrays — write a sentinel object instead.
-      // readOrders() returns [] for any non-array value, so GET still returns [].
-      const r = await fetch(BIN_URL, {
-        method : 'PUT',
-        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-        body   : JSON.stringify({ _cleared: true }),
-      });
-      if (!r.ok) throw new Error(`JSONBin write failed: ${r.status}`);
+      await writeOrders([]);
       return res.status(200).json({ ok: true });
     }
 
