@@ -1838,10 +1838,12 @@
       } catch(e) {}
 
       // Also POST to server API so cross-device (iPhone → PC admin) works
+      // Strip screenshotData (base64) — too large for JSONBin (~1MB limit)
+      const { screenshotData: _ignored, ...apiRecord } = orderRecord;
       fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderRecord)
+        body: JSON.stringify(apiRecord)
       }).catch(() => {}); // silent fail — localStorage is fallback
 
       // 2️⃣ Fill customer receipt overlay
