@@ -552,10 +552,16 @@
           <h1>Orders</h1>
           <p>All customer orders sorted by date. Update status after processing.</p>
         </div>
-        <button class="add-btn" id="clearOrdersBtn" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#F87171;box-shadow:none">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M5 3.5V2.5A1 1 0 016 1.5h2a1 1 0 011 1v1M11 3.5L10.5 12h-7L3 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-          Clear All Orders
-        </button>
+        <div style="display:flex;gap:0.6rem;align-items:center;">
+          <button class="add-btn" id="refreshOrdersBtn" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#10B981;box-shadow:none;" onclick="loadOrders(()=>{renderOrders();showToast('Orders refreshed','green');})">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7A5 5 0 112 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M12 3v4h-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Refresh
+          </button>
+          <button class="add-btn" id="clearOrdersBtn" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#F87171;box-shadow:none">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M5 3.5V2.5A1 1 0 016 1.5h2a1 1 0 011 1v1M11 3.5L10.5 12h-7L3 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Clear All
+          </button>
+        </div>
       </div>
 
       <!-- Order Stats -->
@@ -1093,6 +1099,27 @@
       })
       .catch(() => {}); // server offline — localStorage only
   }
+
+  /* Auto-refresh orders from server every 30s — picks up cross-device orders */
+  setInterval(() => {
+    fetch('/api/orders')
+      .then(r => r.json())
+      .then(apiOrders => {
+        if (!Array.isArray(apiOrders) || apiOrders.length === 0) return;
+        const map = new Map();
+        orders.forEach(o => map.set(o.id, o));
+        const prevCount = orders.length;
+        apiOrders.forEach(o => map.set(o.id, o));
+        orders = [...map.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
+        localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+        updatePendingBadge();
+        if (orders.length > prevCount) {
+          showToast('New order received!', 'green');
+          if (document.querySelector('.tab-btn.active')?.dataset.tab === 'orders') renderOrders();
+        }
+      })
+      .catch(() => {});
+  }, 30000);
 
   /* Listen for new orders from checkout tab (instant) */
   if (typeof BroadcastChannel !== 'undefined') {
