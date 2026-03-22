@@ -1472,14 +1472,25 @@
 
     /* Send email on completed or cancelled */
     if (newStatus === 'completed' || newStatus === 'cancelled') {
-      fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type:  newStatus === 'completed' ? 'order_complete' : 'order_cancel',
-          order: orders[idx]
+      const o = orders[idx];
+      if (!o.email) {
+        showToast('No email on order — notification skipped', 'red');
+      } else {
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type:  newStatus === 'completed' ? 'order_complete' : 'order_cancel',
+            order: o
+          })
         })
-      }).catch(() => {});
+        .then(r => r.json())
+        .then(d => {
+          if (d.ok) showToast('Email sent to ' + o.email, 'green');
+          else showToast('Email failed: ' + (d.error || 'unknown'), 'red');
+        })
+        .catch(() => showToast('Email send failed — check API', 'red'));
+      }
     }
     updatePendingBadge();
     updateOrderStats();
