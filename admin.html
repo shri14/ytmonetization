@@ -1228,26 +1228,32 @@
       .catch(() => {}); // server offline — localStorage only
   }
 
-  /* Auto-refresh orders from server every 30s — picks up cross-device orders */
+  /* Auto-refresh orders from server every 5s — cross-device sync */
+  let _lastOrdersHash = '';
   setInterval(() => {
     fetch('/api/orders')
       .then(r => r.json())
       .then(apiOrders => {
-        if (!Array.isArray(apiOrders) || apiOrders.length === 0) return;
-        const map = new Map();
-        orders.forEach(o => map.set(o.id, o));
+        if (!Array.isArray(apiOrders)) return;
+        const hash = JSON.stringify(apiOrders.map(o => o.id + o.status));
+        if (hash === _lastOrdersHash) return; // nothing changed
         const prevCount = orders.length;
-        apiOrders.forEach(o => map.set(o.id, o));
-        orders = [...map.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
+        _lastOrdersHash = hash;
+        // Server is source of truth — merge keeping local screenshotData
+        const localMap = new Map(orders.map(o => [o.id, o]));
+        orders = apiOrders.map(o => ({ ...o, screenshotData: localMap.get(o.id)?.screenshotData || '' }))
+                          .sort((a, b) => new Date(b.date) - new Date(a.date));
         localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
         updatePendingBadge();
-        if (orders.length > prevCount) {
-          showToast('New order received!', 'green');
-          if (document.querySelector('.tab-btn.active')?.dataset.tab === 'orders') renderOrders();
-        }
+        updateOrderStats();
+        const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab
+                       || document.querySelector('.mob-tab.active')?.dataset.tab;
+        if (activeTab === 'orders') renderOrders();
+        if (apiOrders.length > prevCount) showToast('New order received!', 'green');
+        if (apiOrders.length < prevCount) showToast('Orders updated', 'red');
       })
       .catch(() => {});
-  }, 30000);
+  }, 5000);
 
   /* Listen for new orders from checkout tab (instant) */
   if (typeof BroadcastChannel !== 'undefined') {
